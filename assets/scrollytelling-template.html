@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>energy-cube — the story</title>
+<style>
+  :root{
+    --bg:#faf8f3; --surface:#ffffff; --ink:#2a2722; --muted:#6f6d64; --faint:#a6a399;
+    --line:#e6e2d8;
+    --amber:#bf7d2a; --amber-s:#f6ebd7; --blue:#37708f; --blue-s:#e2eef3;
+    --green:#4d8759; --green-s:#e3f0e5; --clay:#b14d3b; --clay-s:#f6e3dd;
+    --violet:#6a5a8c; --violet-s:#ece6f4;
+    --serif:"Iowan Old Style",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#161512; --surface:#211f1a; --ink:#ece8dd; --muted:#a8a59a; --faint:#76736a;
+      --line:#322f28;
+      --amber:#dba055; --amber-s:#352a18; --blue:#7fb6d2; --blue-s:#1f2e37;
+      --green:#8cc79a; --green-s:#1d3324; --clay:#d77f6b; --clay-s:#37241f;
+      --violet:#b3a4d6; --violet-s:#282138; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+  /* progress + rail */
+  #bar{position:fixed;top:0;left:0;height:3px;background:var(--amber);width:0;z-index:50;transition:width .1s linear}
+  #rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:11px}
+  #rail a{width:9px;height:9px;border-radius:50%;background:var(--line);border:1px solid var(--faint);display:block;transition:all .2s}
+  #rail a.on{background:var(--amber);border-color:var(--amber);transform:scale(1.35)}
+  #rail a span{position:absolute;right:18px;white-space:nowrap;font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:2px 7px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .15s}
+  #rail a:hover span{opacity:1}
+  @media (max-width:1080px){#rail{display:none}}
+
+  .chap{max-width:820px;margin:0 auto;padding:78px 28px;min-height:62vh;display:flex;flex-direction:column;justify-content:center;border-top:1px solid var(--line)}
+  .chap:first-of-type{border-top:none}
+  .kick{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .kick i{display:inline-block;width:26px;height:1px;background:var(--amber)}
+  h1{font-family:var(--serif);font-size:clamp(40px,8vw,76px);line-height:1.02;font-weight:600;margin:0 0 18px;letter-spacing:-.02em}
+  h2{font-family:var(--serif);font-size:clamp(27px,4.6vw,40px);line-height:1.12;font-weight:600;margin:0 0 14px;letter-spacing:-.01em}
+  .lede{font-family:var(--serif);font-size:clamp(19px,2.4vw,23px);line-height:1.5;color:var(--ink);max-width:30em;margin:0 0 6px}
+  .cap{font-size:16px;color:var(--muted);max-width:34em;margin:14px 0 0}
+  .cap b{color:var(--ink);font-weight:600}
+  figure{margin:30px 0 0}
+  svg{width:100%;height:auto;display:block;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px}
+  figcaption{font-size:13.5px;color:var(--faint);margin-top:10px;text-align:center}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  .hero{min-height:88vh}
+  .scroll-hint{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-top:48px}
+  /* svg helpers */
+  .box{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
+  .amber{fill:var(--amber-s);stroke:var(--amber);stroke-width:1.2}
+  .blue{fill:var(--blue-s);stroke:var(--blue);stroke-width:1.2}
+  .green{fill:var(--green-s);stroke:var(--green);stroke-width:1.2}
+  .clay{fill:var(--clay-s);stroke:var(--clay);stroke-width:1.2}
+  .violet{fill:var(--violet-s);stroke:var(--violet);stroke-width:1.2}
+  text{font-family:var(--sans);fill:var(--ink)}
+  .t{font-size:14px} .ts{font-size:12px;fill:var(--muted)} .tb{font-size:14px;font-weight:600}
+  .lab{font-size:12px;fill:var(--muted)}
+  .t-amber{fill:var(--amber)} .t-blue{fill:var(--blue)} .t-green{fill:var(--green)} .t-clay{fill:var(--clay)} .t-violet{fill:var(--violet)}
+  .arr{stroke:var(--faint);stroke-width:1.6;fill:none}
+  .flow{stroke:var(--blue);stroke-width:2.6;fill:none}
+  .dash{stroke-dasharray:5 4}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="rail">
+  <a href="#hero" data-l="0"><span>energy-cube</span></a>
+  <a href="#c1" data-l="1"><span>The opportunity</span></a>
+  <a href="#c2" data-l="2"><span>One governed loop</span></a>
+  <a href="#c3" data-l="3"><span>The stand-in</span></a>
+  <a href="#c4" data-l="4"><span>Rules made physical</span></a>
+  <a href="#c5" data-l="5"><span>A constellation</span></a>
+  <a href="#c6" data-l="6"><span>Two planes</span></a>
+  <a href="#c7" data-l="7"><span>A day in the life</span></a>
+  <a href="#c8" data-l="8"><span>Shipping it</span></a>
+  <a href="#c9" data-l="9"><span>The path</span></a>
+</div>
+
+<!-- HERO -->
+<section class="chap hero" id="hero">
+  <div class="kick reveal"><i></i>an AI-native energy system</div>
+  <h1 class="reveal">A battery that<br>runs itself —<br>safely.</h1>
+  <p class="lede reveal">energy-cube turns a grid-scale battery and a solar field into a self-operating, self-auditing machine: it forecasts, decides, acts on the market and the inverter, and records every move — with no dashboard to babysit.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 200" role="img" aria-label="A sun, a battery, and the grid feeding into a faceted cube.">
+      <!-- sun -->
+      <circle cx="90" cy="100" r="26" class="amber"/>
+      <g class="arr" stroke="var(--amber)">
+        <line x1="90" y1="58" x2="90" y2="46"/><line x1="90" y1="154" x2="90" y2="142"/>
+        <line x1="48" y1="100" x2="36" y2="100"/><line x1="144" y1="100" x2="132" y2="100"/>
+        <line x1="60" y1="70" x2="52" y2="62"/><line x1="120" y1="130" x2="128" y2="138"/>
+        <line x1="120" y1="70" x2="128" y2="62"/><line x1="60" y1="130" x2="52" y2="138"/>
+      </g>
+      <text class="ts" x="90" y="186" text-anchor="middle">solar</text>
+      <!-- battery -->
+      <rect x="200" y="74" width="86" height="52" rx="7" class="green"/>
+      <rect x="286" y="90" width="7" height="20" rx="2" class="green"/>
+      <rect x="208" y="98" width="14" height="20" rx="2" fill="var(--green)"/><rect x="226" y="86" width="14" height="32" rx="2" fill="var(--green)"/><rect x="244" y="92" width="14" height="26" rx="2" fill="var(--green)"/>
+      <text class="ts" x="246" y="186" text-anchor="middle">battery (BESS)</text>
+      <!-- grid -->
+      <g stroke="var(--blue)" stroke-width="1.4" fill="none"><path d="M360 124 L380 76 L400 124 L380 76 M380 76 L380 60"/><line x1="360" y1="100" x2="400" y2="100"/></g>
+      <text class="ts" x="380" y="186" text-anchor="middle">grid / market</text>
+      <!-- arrows to cube -->
+      <line class="arr" x1="120" y1="100" x2="195" y2="100" marker-end="url(#a)"/>
+      <line class="arr" x1="300" y1="100" x2="352" y2="100" marker-end="url(#a)"/>
+      <line class="arr" x1="412" y1="100" x2="556" y2="100" marker-end="url(#a)"/>
+      <!-- cube -->
+      <g transform="translate(620,100)">
+        <polygon points="-54,-30 0,-58 54,-30 0,-2" class="amber"/>
+        <polygon points="-54,-30 -54,34 0,62 0,-2" fill="var(--blue-s)" stroke="var(--blue)" stroke-width="1.2"/>
+        <polygon points="54,-30 54,34 0,62 0,-2" fill="var(--green-s)" stroke="var(--green)" stroke-width="1.2"/>
+        <text class="tb" x="0" y="92" text-anchor="middle">energy-cube</text>
+      </g>
+      <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+  </figure>
+  <div class="scroll-hint reveal">scroll to begin ↓</div>
+</section>
+
+<!-- CH1 -->
+<section class="chap" id="c1">
+  <div class="kick reveal"><i></i>chapter one · the opportunity &amp; the danger</div>
+  <h2 class="reveal">Money lives in the spread. So does the risk.</h2>
+  <p class="cap reveal">Power is cheap when the sun floods the grid at midday and dear in the evening peak. A battery earns by buying low and selling high — but every cycle <b>wears the cells</b> and pushes against a <b>hard grid limit</b>. The entire business is that spread, captured <b>without ever crossing a line</b>.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 360" role="img" aria-label="A daily price curve dipping at midday and peaking in the evening, with a charge action at the trough, a discharge at the peak, and a red grid limit that must not be crossed.">
+      <!-- frame -->
+      <line class="arr" x1="70" y1="40" x2="70" y2="300"/>
+      <line class="arr" x1="70" y1="300" x2="770" y2="300"/>
+      <text class="ts" x="40" y="60">RON</text>
+      <text class="ts" x="74" y="318">00:00</text><text class="ts" x="400" y="318" text-anchor="middle">12:00</text><text class="ts" x="766" y="318" text-anchor="end">24:00</text>
+      <!-- limit line -->
+      <line class="lim dash" x1="70" y1="66" x2="770" y2="66" stroke="var(--clay)" stroke-width="1.6"/>
+      <text class="t-clay" x="766" y="58" text-anchor="end" font-size="12">grid / safety limit — never cross</text>
+      <!-- price curve (duck) -->
+      <path class="flow" d="M70 150 C140 120 180 235 270 244 S370 250 430 188 S560 96 620 104 S720 150 770 158"/>
+      <text class="t-blue" x="150" y="135" font-size="12">price</text>
+      <!-- charge at trough -->
+      <g>
+        <line class="arr" x1="270" y1="196" x2="270" y2="232" stroke="var(--green)" marker-end="url(#ag)"/>
+        <rect x="240" y="166" width="60" height="28" rx="6" class="green"/>
+        <text class="t-green tb" x="270" y="184" text-anchor="middle" font-size="12">charge</text>
+      </g>
+      <!-- discharge at peak -->
+      <g>
+        <line class="arr" x1="600" y1="118" x2="600" y2="150" stroke="var(--amber)" marker-end="url(#aa)"/>
+        <rect x="556" y="150" width="92" height="28" rx="6" class="amber"/>
+        <text class="t-amber tb" x="602" y="168" text-anchor="middle" font-size="12">discharge / sell</text>
+      </g>
+      <defs>
+        <marker id="ag" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 2L5 8L9 2" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="aa" viewBox="0 0 10 10" refX="5" refY="2" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 8L5 2L9 8" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      </defs>
+    </svg>
+    <figcaption>Buy at the midday trough, sell into the evening peak — only when the spread beats the wear, and only inside the limit.</figcaption>
+  </figure>
+</section>
+
+<!-- CH2 -->
+<section class="chap" id="c2">
+  <div class="kick reveal"><i></i>chapter two · the idea</div>
+  <h2 class="reveal">One small loop. Nothing acts ungated.</h2>
+  <p class="cap reveal">The machine is a single governed loop: it <b>senses</b> the plant, <b>decides</b> a move, then the move must pass three gates — <b>is it sane, is it allowed, is it authorized</b> — before it <b>acts</b>. Every step is signed onto an audit trail you can replay. Deny by default; an action with no receipt never happened.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 280" role="img" aria-label="A pipeline: sense, decide, three gates, act — every step writing down to a signed spine.">
+      <!-- nodes -->
+      <g>
+        <rect x="40" y="46" width="150" height="56" rx="10" class="blue"/><text class="tb" x="115" y="74" text-anchor="middle">sense</text><text class="ts" x="115" y="91" text-anchor="middle">read the plant</text>
+        <rect x="232" y="46" width="150" height="56" rx="10" class="green"/><text class="tb" x="307" y="74" text-anchor="middle">decide</text><text class="ts" x="307" y="91" text-anchor="middle">the setpoint</text>
+        <rect x="424" y="46" width="150" height="56" rx="10" class="violet"/><text class="tb" x="499" y="74" text-anchor="middle">gates</text><text class="ts" x="499" y="91" text-anchor="middle">eval · policy · trust</text>
+        <rect x="616" y="46" width="150" height="56" rx="10" class="amber"/><text class="tb" x="691" y="74" text-anchor="middle">act</text><text class="ts" x="691" y="91" text-anchor="middle">signed receipt</text>
+      </g>
+      <line class="arr" x1="190" y1="74" x2="230" y2="74" marker-end="url(#a2)"/>
+      <line class="arr" x1="382" y1="74" x2="422" y2="74" marker-end="url(#a2)"/>
+      <line class="arr" x1="574" y1="74" x2="614" y2="74" marker-end="url(#a2)"/>
+      <!-- gate pills -->
+      <g>
+        <rect x="408" y="132" width="58" height="26" rx="13" class="violet"/><text class="ts t-violet" x="437" y="149" text-anchor="middle">eval</text>
+        <rect x="472" y="132" width="64" height="26" rx="13" class="violet"/><text class="ts t-violet" x="504" y="149" text-anchor="middle">policy</text>
+        <rect x="542" y="132" width="62" height="26" rx="13" class="violet"/><text class="ts t-violet" x="573" y="149" text-anchor="middle">trust</text>
+        <line class="arr dash" x1="499" y1="102" x2="499" y2="130"/>
+      </g>
+      <!-- spine -->
+      <rect x="40" y="206" width="726" height="44" rx="9" class="box"/>
+      <text class="tb" x="403" y="226" text-anchor="middle">cube-spine</text>
+      <text class="ts" x="403" y="242" text-anchor="middle">every step signed, correlated, replayable</text>
+      <g class="arr dash">
+        <line x1="115" y1="102" x2="115" y2="206"/><line x1="307" y1="102" x2="307" y2="206"/><line x1="691" y1="102" x2="691" y2="206"/>
+      </g>
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>sense → decide → eval · policy · trust → act — and everything narrates to the spine.</figcaption>
+  </figure>
+</section>
+
+<!-- CH3 -->
+<section class="chap" id="c3">
+  <div class="kick reveal"><i></i>chapter three · how it stays honest</div>
+  <h2 class="reveal">Every edge has a stand-in.</h2>
+  <p class="cap reveal">Each thing that touches the real world — an inverter, a price feed, a forecast — is a <b>seam</b>: a tiny contract with a <b>deterministic stand-in (a Fake)</b> as its source of truth. The whole system runs and tests <b>offline, with no keys and no hardware</b>. The real vendor is just one plug behind the same shape — so <b>FusionSolar is one adapter, never the design</b>.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 280" role="img" aria-label="A caller talks to an interface seam; behind it sit two interchangeable implementations: a deterministic Fake for CI and a real adapter for production.">
+      <rect x="40" y="112" width="150" height="56" rx="10" class="box"/><text class="tb" x="115" y="140" text-anchor="middle">the cube</text><text class="ts" x="115" y="157" text-anchor="middle">caller</text>
+      <line class="arr" x1="190" y1="140" x2="296" y2="140" marker-end="url(#a3)"/>
+      <!-- seam -->
+      <rect x="300" y="98" width="150" height="84" rx="10" class="violet"/><text class="tb t-violet" x="375" y="134" text-anchor="middle">seam</text><text class="ts" x="375" y="152" text-anchor="middle">a small contract</text>
+      <!-- two impls -->
+      <line class="arr" x1="450" y1="124" x2="556" y2="78" marker-end="url(#a3)"/>
+      <line class="arr" x1="450" y1="156" x2="556" y2="202" marker-end="url(#a3)"/>
+      <rect x="560" y="50" width="220" height="56" rx="10" class="green"/><text class="tb t-green" x="670" y="74" text-anchor="middle">Fake — source of truth</text><text class="ts" x="670" y="92" text-anchor="middle">deterministic · offline · in CI</text>
+      <rect x="560" y="174" width="220" height="56" rx="10" class="amber"/><text class="tb t-amber" x="670" y="198" text-anchor="middle">real adapter</text><text class="ts" x="670" y="216" text-anchor="middle">network / hardware · in prod</text>
+      <text class="ts" x="505" y="116" text-anchor="middle">CI</text><text class="ts" x="505" y="182" text-anchor="middle">live</text>
+      <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>The Fake defines the behaviour everyone relies on; a real adapter that diverges from it is a bug.</figcaption>
+  </figure>
+</section>
+
+<!-- CH4 -->
+<section class="chap" id="c4">
+  <div class="kick reveal"><i></i>chapter four · the rules, made physical</div>
+  <h2 class="reveal">Illegal states simply can't be reached.</h2>
+  <p class="cap reveal">The battery's life is a tiny state machine, and the business rules are its <b>guards</b>. It <b>cannot</b> enter <i>Discharging</i> if the charge is below the floor, or if the spread doesn't beat the wear. Trip a safety limit or pull the kill-switch and it <b>falls closed to Idle</b>. Compliance isn't a checklist — it's the shape of the machine.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 300" role="img" aria-label="A state machine: Idle in the centre, Charging above-right and Discharging below-right, with guard conditions on each transition and a fail-closed return to Idle.">
+      <!-- states -->
+      <rect x="60" y="120" width="150" height="60" rx="12" class="box"/><text class="tb" x="135" y="146" text-anchor="middle">Idle</text><text class="ts" x="135" y="164" text-anchor="middle">0 MW</text>
+      <rect x="560" y="40" width="180" height="60" rx="12" class="green"/><text class="tb t-green" x="650" y="66" text-anchor="middle">Charging</text><text class="ts" x="650" y="84" text-anchor="middle">soak the cheap energy</text>
+      <rect x="560" y="200" width="180" height="60" rx="12" class="amber"/><text class="tb t-amber" x="650" y="226" text-anchor="middle">Discharging</text><text class="ts" x="650" y="244" text-anchor="middle">sell into the peak</text>
+      <!-- transitions -->
+      <path class="arr" d="M210 138 C360 110 430 80 558 74" marker-end="url(#a4)"/>
+      <text class="lab t-green" x="360" y="96" text-anchor="middle">[ SoC &lt; ceiling ∧ absorption ok ]</text>
+      <path class="arr" d="M210 162 C360 196 430 226 558 232" marker-end="url(#a4)"/>
+      <text class="lab t-amber" x="368" y="214" text-anchor="middle">[ SoC &gt; floor ∧ injection ok ∧ spread &gt; wear ]</text>
+      <path class="arr" d="M560 90 C470 120 360 132 212 140" marker-end="url(#a4)"/>
+      <text class="lab" x="430" y="128" text-anchor="middle">|error| &lt; deadband</text>
+      <!-- fail closed -->
+      <g>
+        <path d="M650 150 L666 130 L634 130 Z" fill="var(--clay)"/>
+        <text class="t-clay" x="650" y="160" text-anchor="middle" font-size="11">safety / kill-switch</text>
+        <path class="arr dash" d="M634 145 C440 150 320 152 212 150" stroke="var(--clay)" marker-end="url(#a4c)"/>
+        <text class="t-clay lab" x="400" y="170" text-anchor="middle">fail closed → Idle</text>
+      </g>
+      <defs>
+        <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="a4c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      </defs>
+    </svg>
+    <figcaption>The guards are the business rules; the eval gate re-checks them before any dispatch — defence in depth.</figcaption>
+  </figure>
+</section>
+
+<!-- CH5 -->
+<section class="chap" id="c5">
+  <div class="kick reveal"><i></i>chapter five · the twist</div>
+  <h2 class="reveal">It was never one cube.</h2>
+  <p class="cap reveal">To decide well, the battery needs to see the future: tomorrow's <b>prices</b>, its <b>solar</b>, the <b>load</b>. Each of those is its own engine — and <b>we build them</b>. So the system is a <b>constellation</b>: forecasting cubes that are products in their own right, feeding one dispatch cube that acts on the asset and the market. All on the same spine.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 470" role="img" aria-label="Five forecast and market cubes feed a dispatch cube, which acts via inverter control and market access; all share a spine that reports read.">
+      <!-- inputs -->
+      <g>
+        <rect x="24" y="30" width="200" height="50" rx="9" class="blue"/><text class="tb" x="124" y="52" text-anchor="middle">MarketData</text><text class="ts" x="124" y="69" text-anchor="middle">DAM prices, fundamentals</text>
+        <rect x="24" y="92" width="200" height="50" rx="9" class="blue"/><text class="tb" x="124" y="114" text-anchor="middle">ForwardCurve</text><text class="ts" x="124" y="131" text-anchor="middle">forward price curve</text>
+        <rect x="24" y="154" width="200" height="50" rx="9" class="blue"/><text class="tb" x="124" y="176" text-anchor="middle">PriceForecast</text><text class="ts" x="124" y="193" text-anchor="middle">price P10–P90</text>
+        <rect x="24" y="216" width="200" height="50" rx="9" class="blue"/><text class="tb" x="124" y="238" text-anchor="middle">SolarForecast</text><text class="ts" x="124" y="255" text-anchor="middle">PV P10–P90</text>
+        <rect x="24" y="278" width="200" height="50" rx="9" class="blue"/><text class="tb" x="124" y="300" text-anchor="middle">ConsumptionForecast</text><text class="ts" x="124" y="317" text-anchor="middle">load P10–P90</text>
+      </g>
+      <!-- fan in -->
+      <g class="arr">
+        <line x1="226" y1="55" x2="326" y2="190" marker-end="url(#a5)"/>
+        <line x1="226" y1="117" x2="326" y2="194" marker-end="url(#a5)"/>
+        <line x1="226" y1="179" x2="326" y2="198" marker-end="url(#a5)"/>
+        <line x1="226" y1="241" x2="326" y2="202" marker-end="url(#a5)"/>
+        <line x1="226" y1="303" x2="326" y2="206" marker-end="url(#a5)"/>
+      </g>
+      <!-- dispatch -->
+      <rect x="330" y="150" width="150" height="96" rx="12" class="amber"/><text class="tb t-amber" x="405" y="190" text-anchor="middle">Dispatch</text><text class="ts" x="405" y="208" text-anchor="middle">optimize + setpoint</text><text class="ts" x="405" y="224" text-anchor="middle">(OptB MILP)</text>
+      <!-- actions -->
+      <line class="arr" x1="480" y1="186" x2="516" y2="176" marker-end="url(#a5)"/>
+      <line class="arr" x1="480" y1="210" x2="516" y2="256" marker-end="url(#a5)"/>
+      <rect x="520" y="150" width="190" height="52" rx="9" class="amber"/><text class="tb t-amber" x="615" y="172" text-anchor="middle">InverterControl</text><text class="ts" x="615" y="189" text-anchor="middle">act on the asset</text>
+      <rect x="520" y="230" width="190" height="52" rx="9" class="amber"/><text class="tb t-amber" x="615" y="252" text-anchor="middle">MarketAccess</text><text class="ts" x="615" y="269" text-anchor="middle">act on the market</text>
+      <!-- spine -->
+      <g class="arr dash"><line x1="124" y1="328" x2="124" y2="352"/><line x1="405" y1="246" x2="405" y2="352"/><line x1="615" y1="282" x2="615" y2="352"/></g>
+      <rect x="24" y="352" width="686" height="46" rx="9" class="box"/><text class="tb" x="367" y="372" text-anchor="middle">cube-spine</text><text class="ts" x="367" y="389" text-anchor="middle">signed · correlated · replayable</text>
+      <!-- reports -->
+      <line class="arr" x1="540" y1="398" x2="540" y2="412" marker-end="url(#a5)"/>
+      <rect x="430" y="414" width="280" height="40" rx="9" class="box"/><text class="t" x="570" y="439" text-anchor="middle">Reports &amp; analytics — read the spine</text>
+      <defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>Eight cubes, one spine. Any forecast cube is also callable on its own.</figcaption>
+  </figure>
+</section>
+
+<!-- CH6 -->
+<section class="chap" id="c6">
+  <div class="kick reveal"><i></i>chapter six · how it holds together</div>
+  <h2 class="reveal">A thin brain over deep engines.</h2>
+  <p class="cap reveal">The engines are real services — Rust, Python, TypeScript — with their own databases and queues. They sit in a <b>capability plane</b>. Above them, a <b>thin control plane</b> (the cubes, the gates, the spine) does the governing. The seam is the border between them: a <b>Fake</b> on the inside for testing, a <b>real adapter</b> reaching the engine in production.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 300" role="img" aria-label="A control plane band of cubes and gates sits above a capability plane band of engines and datastores, joined across a seam boundary.">
+      <!-- control plane -->
+      <rect x="30" y="30" width="760" height="84" rx="12" class="violet"/>
+      <text class="tb t-violet" x="48" y="54" font-size="13">CONTROL PLANE · Bun conductor (thin, new)</text>
+      <g>
+        <rect x="48" y="64" width="150" height="38" rx="8" class="box"/><text class="ts" x="123" y="88" text-anchor="middle">cubes + gates</text>
+        <rect x="210" y="64" width="150" height="38" rx="8" class="box"/><text class="ts" x="285" y="88" text-anchor="middle">signed spine</text>
+        <rect x="372" y="64" width="150" height="38" rx="8" class="box"/><text class="ts" x="447" y="88" text-anchor="middle">scheduler</text>
+        <rect x="534" y="64" width="150" height="38" rx="8" class="box"/><text class="ts" x="609" y="88" text-anchor="middle">MCP / headless</text>
+      </g>
+      <!-- seam divider -->
+      <line class="dash" x1="30" y1="150" x2="790" y2="150" stroke="var(--faint)" stroke-width="1.4"/>
+      <text class="ts" x="410" y="143" text-anchor="middle">the seam — Fake (CI) ↔ real adapter (prod) · minted token over the private network</text>
+      <g class="arr"><line x1="410" y1="116" x2="410" y2="184" marker-end="url(#a6)"/></g>
+      <!-- capability plane -->
+      <rect x="30" y="186" width="760" height="92" rx="12" class="box"/>
+      <text class="tb" x="48" y="208" font-size="13">CAPABILITY PLANE · our engines (deployed services)</text>
+      <g>
+        <rect x="48" y="220" width="135" height="34" rx="8" class="blue"/><text class="ts" x="115" y="241" text-anchor="middle">solar-forecast</text>
+        <rect x="193" y="220" width="150" height="34" rx="8" class="blue"/><text class="ts" x="268" y="241" text-anchor="middle">consumption-fc</text>
+        <rect x="353" y="220" width="160" height="34" rx="8" class="blue"/><text class="ts" x="433" y="241" text-anchor="middle">market-platform</text>
+        <rect x="523" y="220" width="120" height="34" rx="8" class="blue"/><text class="ts" x="583" y="241" text-anchor="middle">fwdcurves</text>
+        <rect x="653" y="220" width="120" height="34" rx="8" class="amber"/><text class="ts" x="713" y="241" text-anchor="middle">market-access</text>
+      </g>
+      <defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>We write the thin plane. The deep engines already exist — we wrap, not rewrite.</figcaption>
+  </figure>
+</section>
+
+<!-- CH7 -->
+<section class="chap" id="c7">
+  <div class="kick reveal"><i></i>chapter seven · a day in the life</div>
+  <h2 class="reveal">Plan once. Steer ninety-six times.</h2>
+  <p class="cap reveal">Just after prices publish, the forecasts converge into one optimal plan for tomorrow. Then, <b>every fifteen minutes</b>, the cube reads the battery, computes the nudge that hits the planned charge, clears the gates, and acts — settling each interval onto the record.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 300" role="img" aria-label="A 24-hour timeline: at about 13:00 four forecasts converge into a committed plan; after that a 15-minute control loop repeats across the day.">
+      <!-- forecasts converging -->
+      <g>
+        <rect x="60" y="24" width="110" height="32" rx="8" class="blue"/><text class="ts" x="115" y="44" text-anchor="middle">prices</text>
+        <rect x="190" y="24" width="110" height="32" rx="8" class="blue"/><text class="ts" x="245" y="44" text-anchor="middle">price P50</text>
+        <rect x="320" y="24" width="110" height="32" rx="8" class="blue"/><text class="ts" x="375" y="44" text-anchor="middle">solar PV</text>
+        <rect x="450" y="24" width="110" height="32" rx="8" class="blue"/><text class="ts" x="505" y="44" text-anchor="middle">load</text>
+      </g>
+      <g class="arr">
+        <line x1="115" y1="56" x2="405" y2="104" marker-end="url(#a7)"/>
+        <line x1="245" y1="56" x2="405" y2="104" marker-end="url(#a7)"/>
+        <line x1="375" y1="56" x2="405" y2="104" marker-end="url(#a7)"/>
+        <line x1="505" y1="56" x2="430" y2="104" marker-end="url(#a7)"/>
+      </g>
+      <rect x="330" y="106" width="170" height="36" rx="9" class="amber"/><text class="tb t-amber" x="415" y="129" text-anchor="middle">plan committed</text>
+      <line class="arr dash" x1="415" y1="142" x2="415" y2="186" marker-end="url(#a7)"/>
+      <!-- timeline -->
+      <line class="arr" x1="60" y1="200" x2="780" y2="200"/>
+      <text class="ts" x="60" y="220">00:00</text><text class="ts" x="415" y="220" text-anchor="middle">13:00</text><text class="ts" x="780" y="220" text-anchor="end">24:00</text>
+      <circle cx="415" cy="200" r="5" fill="var(--amber)"/>
+      <text class="t-amber lab" x="415" y="240" text-anchor="middle">daily plan</text>
+      <!-- 15-min ticks after 13:00 -->
+      <g stroke="var(--green)" stroke-width="1.6">
+        <line x1="445" y1="200" x2="445" y2="190"/><line x1="467" y1="200" x2="467" y2="190"/><line x1="489" y1="200" x2="489" y2="190"/><line x1="511" y1="200" x2="511" y2="190"/><line x1="533" y1="200" x2="533" y2="190"/><line x1="555" y1="200" x2="555" y2="190"/><line x1="577" y1="200" x2="577" y2="190"/><line x1="599" y1="200" x2="599" y2="190"/><line x1="621" y1="200" x2="621" y2="190"/><line x1="643" y1="200" x2="643" y2="190"/><line x1="665" y1="200" x2="665" y2="190"/><line x1="687" y1="200" x2="687" y2="190"/><line x1="709" y1="200" x2="709" y2="190"/><line x1="731" y1="200" x2="731" y2="190"/><line x1="753" y1="200" x2="753" y2="190"/>
+      </g>
+      <!-- callout -->
+      <line class="arr" x1="600" y1="200" x2="600" y2="250" marker-end="url(#a7)"/>
+      <rect x="470" y="252" width="300" height="36" rx="9" class="green"/><text class="ts t-green" x="620" y="275" text-anchor="middle">sense → decide → gate → act, every 15 min</text>
+      <text class="lab" x="250" y="278" text-anchor="middle">15-min control loop · 96× per day</text>
+      <defs><marker id="a7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>One signed transcript replays the whole trading day — the evidence for settlement and review.</figcaption>
+  </figure>
+</section>
+
+<!-- CH8 -->
+<section class="chap" id="c8">
+  <div class="kick reveal"><i></i>chapter eight · shipping it</div>
+  <h2 class="reveal">One project. One public door.</h2>
+  <p class="cap reveal">On Railway, only the <b>conductor</b> faces the world — the MCP control surface and the reports. Every engine and datastore lives on the <b>private network</b> behind it, reached with a short-lived minted token. The whole thing builds into a single bundle and tests green before a single real service is wired.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 310" role="img" aria-label="A public conductor service sits above a private network containing the engine services and managed datastores.">
+      <rect x="300" y="22" width="220" height="56" rx="11" class="amber"/><text class="tb t-amber" x="410" y="46" text-anchor="middle">conductor — public</text><text class="ts" x="410" y="64" text-anchor="middle">cubes · gates · spine · MCP · /health</text>
+      <line class="arr" x1="410" y1="78" x2="410" y2="108" marker-end="url(#a8)"/>
+      <text class="ts" x="500" y="98" text-anchor="middle">minted token</text>
+      <!-- private network -->
+      <rect x="40" y="110" width="740" height="180" rx="14" class="box dash" stroke-dasharray="6 5"/>
+      <text class="ts" x="58" y="132">private network</text>
+      <text class="lab" x="58" y="170" font-size="12">engines</text>
+      <g>
+        <rect x="120" y="150" width="120" height="38" rx="8" class="blue"/><text class="ts" x="180" y="174" text-anchor="middle">solar-forecast</text>
+        <rect x="250" y="150" width="130" height="38" rx="8" class="blue"/><text class="ts" x="315" y="174" text-anchor="middle">consumption-fc</text>
+        <rect x="390" y="150" width="140" height="38" rx="8" class="blue"/><text class="ts" x="460" y="174" text-anchor="middle">market-platform</text>
+        <rect x="540" y="150" width="100" height="38" rx="8" class="blue"/><text class="ts" x="590" y="174" text-anchor="middle">fwdcurves</text>
+        <rect x="650" y="150" width="110" height="38" rx="8" class="amber"/><text class="ts" x="705" y="174" text-anchor="middle">market-access</text>
+      </g>
+      <text class="lab" x="58" y="232" font-size="12">backends</text>
+      <g>
+        <rect x="120" y="212" width="110" height="38" rx="8" class="green"/><text class="ts" x="175" y="236" text-anchor="middle">Postgres</text>
+        <rect x="240" y="212" width="120" height="38" rx="8" class="green"/><text class="ts" x="300" y="236" text-anchor="middle">TimescaleDB</text>
+        <rect x="370" y="212" width="90" height="38" rx="8" class="green"/><text class="ts" x="415" y="236" text-anchor="middle">NATS</text>
+        <rect x="470" y="212" width="90" height="38" rx="8" class="green"/><text class="ts" x="515" y="236" text-anchor="middle">Redis</text>
+        <rect x="570" y="212" width="160" height="38" rx="8" class="green"/><text class="ts" x="650" y="236" text-anchor="middle">transcript sink</text>
+      </g>
+      <defs><marker id="a8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>Deploy = one <code>bun build</code> bundle. CI runs hermetic on Fakes; real edges light up behind the seams.</figcaption>
+  </figure>
+</section>
+
+<!-- CH9 -->
+<section class="chap" id="c9">
+  <div class="kick reveal"><i></i>chapter nine · the path forward</div>
+  <h2 class="reveal">Stand-ins first. One green step at a time.</h2>
+  <p class="cap reveal">We write the contracts, then their Fakes, then the cube around them — proving a full day offline before a single real service is touched. Each step is green on its own. We're <b>done</b> when every capability has a stand-in and a real plug, all wired in the conductor, deployable.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 210" role="img" aria-label="A rising path of seven build steps from contracts to deploy.">
+      <polyline class="flow" points="70,150 188,140 306,126 424,112 542,98 660,84 760,70" stroke="var(--green)"/>
+      <g>
+        <circle cx="70" cy="150" r="13" class="green"/><text class="tb t-green" x="70" y="155" text-anchor="middle" font-size="12">P0</text><text class="ts" x="70" y="182" text-anchor="middle">contracts</text>
+        <circle cx="188" cy="140" r="13" class="green"/><text class="tb t-green" x="188" y="145" text-anchor="middle" font-size="12">P1</text><text class="ts" x="188" y="172" text-anchor="middle">Dispatch</text>
+        <circle cx="306" cy="126" r="13" class="green"/><text class="tb t-green" x="306" y="131" text-anchor="middle" font-size="12">P2</text><text class="ts" x="306" y="158" text-anchor="middle">forecasts</text>
+        <circle cx="424" cy="112" r="13" class="green"/><text class="tb t-green" x="424" y="117" text-anchor="middle" font-size="12">P3</text><text class="ts" x="424" y="144" text-anchor="middle">act + report</text>
+        <circle cx="542" cy="98" r="13" class="green"/><text class="tb t-green" x="542" y="103" text-anchor="middle" font-size="12">P4</text><text class="ts" x="542" y="130" text-anchor="middle">constellation</text>
+        <circle cx="660" cy="84" r="13" class="amber"/><text class="tb t-amber" x="660" y="89" text-anchor="middle" font-size="12">P5</text><text class="ts" x="660" y="116" text-anchor="middle">real adapters</text>
+        <circle cx="760" cy="70" r="13" class="amber"/><text class="tb t-amber" x="760" y="75" text-anchor="middle" font-size="12">P6</text><text class="ts" x="760" y="102" text-anchor="middle">deploy</text>
+      </g>
+    </svg>
+    <figcaption>contracts → fakes → faces → wiring → real adapters → deploy. The Fake is always written first; the real adapter must match it.</figcaption>
+  </figure>
+  <p class="cap reveal" style="margin-top:28px"><b>Where we are:</b> the design is complete, end to end. No code yet. The build begins at <b>P0</b> — and from there, every functionality becomes a cube, until the battery runs itself.</p>
+  <p class="cap reveal" style="font-size:13px;color:var(--faint);margin-top:30px">energy-cube · part of the cube platform · Apache-2.0 · Vlad Bordei · design phase</p>
+</section>
+
+<script>
+(function(){
+  var bar=document.getElementById('bar');
+  var reveals=[].slice.call(document.querySelectorAll('.reveal'));
+  var sections=[].slice.call(document.querySelectorAll('.chap'));
+  var dots=[].slice.call(document.querySelectorAll('#rail a'));
+  function onScroll(){
+    var h=document.documentElement;
+    var p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+    bar.style.width=(p*100)+'%';
+  }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  var ro=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:0.12});
+  reveals.forEach(function(el){ro.observe(el);});
+  var so=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        var id=e.target.id;
+        dots.forEach(function(d){ d.classList.toggle('on', d.getAttribute('href')==='#'+id); });
+      }
+    });
+  },{threshold:0.5});
+  sections.forEach(function(s){so.observe(s);});
+})();
+</script>
+</body>
+</html>
