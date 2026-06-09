@@ -60,9 +60,14 @@ Run roughly this order. Don't recite it — let it feel like a conversation.
    it: "So Maria gets the receipt, keys it into the old system, prints the report,
    emails it to finance — and anything over ten thousand goes to a manager
    instead. Right?" Fix what they correct.
-8. **Ask for examples to make it real.** "Do you have an actual one of these you
-   can share — the spreadsheet, the form, the report?" Each example enriches the
-   model (see `references/virtualization-and-enrichment.md`).
+8. **Ask for examples and templates to make it real.** "Do you have an actual
+   one of these you can share — the spreadsheet, the form, the report? Even a
+   blank template helps." Everything they hand over is **registered** in the
+   evidence register the moment it arrives — what it is, who gave it, which step
+   of their process it belongs to — and then folded into the model (see
+   `references/virtualization-and-enrichment.md`). Tell them what you did with
+   it ("the template you sent added two fields I didn't know about"), so they
+   feel each contribution land.
 
 ## Knowing when the mapping is "done"
 
@@ -83,15 +88,20 @@ manager you've reached it:
   that's how it works" — the single most important signal.
 
 When all six hold for a process, summarise it back, save the artifacts (map,
-requirements entry, lexicon terms), and offer the manager the next process to map
-or a wrap-up. If something can't be resolved (they don't know an answer, or two
+requirements entry, lexicon terms, evidence-register entries for everything they
+shared), and offer the manager the next process to map or a wrap-up. Written
+artifacts the manager will see are HTML — responsive and e-mail sharable, so
+they can forward the mapped process to a colleague from their phone (see
+`references/visual-communication.md`). If something can't be resolved (they don't know an answer, or two
 people disagree), record it as an open question and move on — don't stall the whole
 mapping on one gap.
 
 ## Handing back to the technical team
 
 What the manager produces in this mode — narratives, policies, the execution split,
-the lexicon, and any examples — is exactly the input the Meso level needs. A
-consultant or engineer can pick it up and descend into systems, contracts, and
-fakes without re-interviewing anyone. The manager's session, done well, is the
-front half of the whole methodology.
+the lexicon, and the registered examples and templates — is exactly the input the
+Meso level needs. A consultant, an engineer, or the AI itself can pick it up and
+descend into systems, contracts, and fakes without re-interviewing anyone. The
+manager's session, done well, is the front half of the whole methodology — the
+back half ends with each mapped capability packaged as a cube that an AI coding
+app can implement (see `references/functional-requirements.md`).

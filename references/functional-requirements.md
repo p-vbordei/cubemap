@@ -30,10 +30,24 @@ whether a human, an agent, or plain automation owns it. That allocation is itsel
 a deliverable the client cares about — it's the picture of how their organisation
 changes.
 
+## Format: a self-contained HTML document
+
+The requirements ship as **HTML, not Markdown** — `business-models/requirements.html`
+(or one file per capability for large engagements). Use semantic HTML (`<section>`
+per capability, `<article>` per process) styled in the house palette, with the
+process pictures inline as SVG; for the stakeholder-facing walkthrough, build it
+as the scrollytelling explainer (`assets/scrollytelling-template.html`). Like
+every deliverable, it must be responsive (readable on a phone) and e-mail
+sharable (one self-contained file, no external assets) — see
+`references/visual-communication.md`. HTML is what lets the requirements carry
+their own diagrams, read like the story they came from, and still be structured
+enough for an AI coding app to consume.
+
 ## Structure of the requirements
 
 Organise by capability (from Macro), and within each capability by process. Use
-this template per capability:
+this template per capability (shown schematically here; render it as the
+semantic HTML described above):
 
 ```
 ## Capability: <name>   (core | supporting)
@@ -98,6 +112,36 @@ the three never disagree. Version the requirements alongside the contracts in th
 repo (`business-models/`). When you can run the simulation and it satisfies the
 acceptance criteria, the requirements are validated — not by review, but by a
 working system the client has clicked through.
+
+## The handoff: a cube an AI coding app can implement
+
+The requirements are the top sheet of a larger package. When a capability is
+fully mapped — requirements signed off, contracts defined, statecharts drawn,
+fakes running, evidence registered — that capability is a **cube**: a
+self-contained unit that can be handed to an implementer without a single
+clarifying meeting. The realistic implementer is increasingly an **AI coding
+app** (Claude Code, Lovable, v0, Cursor and the like), and the cube is exactly
+the spec such a tool needs. A handoff cube contains:
+
+- `requirements.html` — the functional requirements for this capability,
+  including the human / AI / automation split and acceptance criteria.
+- The relevant slice of `LEXICON.md` — so the implementation uses the client's
+  words in code, UI, and data.
+- `contracts/` — the OpenAPI/AsyncAPI specs for every boundary the cube touches.
+  These are non-negotiable interfaces, not suggestions.
+- `src/machines/` — the XState statecharts: the behaviour, with the business
+  policies already encoded as guards.
+- `fakes/` + seed data — the running simulation the implementation must be a
+  drop-in replacement for, and the neighbours it must coexist with.
+- `examples/` + the evidence register entries — the real client artifacts the
+  data shapes came from.
+
+The instruction to the AI coding app is then one sentence: *"implement this
+capability against these contracts and statecharts; the acceptance criteria are
+your tests; do not change either."* Because each cube speaks to the rest of the
+system only through its contracts, cubes can be implemented independently, by
+different tools, in any order — and the organisation is redeployed, cube by
+cube, as an AI-native one.
 
 ## Sign-off without a 90-page document
 

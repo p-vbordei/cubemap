@@ -83,13 +83,22 @@ complete sync→async business flow entirely in simulation.
 
 ## Zoom 4 — Atomic (real code)
 
-The Return Validation Service is implemented for real in TypeScript, inside the
-node, honouring the exact OpenAPI contract (L2) and statechart (L3). It's contract-
-tested with **Schemathesis** (fuzzing) and gated with **PactFlow `can-i-deploy`**
-before release. DDD guardrails ensure the new code doesn't, say, let the refund
-Entity reach directly into the Order Aggregate. When it's ready, it drops into the
-running canvas in place of the fake — and the rest of the system, still partly
-simulated, never notices, because the contract never changed.
+By now **Return Validation** is a complete cube: its story and policies (L1),
+its OpenAPI contract and running fake (L2), its statechart (L3), and the real
+return records the client shared, each one in the evidence register. That cube
+is handed to an implementer — here, an AI coding app, with the one-sentence
+brief: *implement this service against this contract and this statechart; the
+acceptance criteria are your tests; change neither.*
+
+The Return Validation Service comes back implemented in TypeScript, honouring
+the exact OpenAPI contract (L2) and statechart (L3). It's contract-tested with
+**Schemathesis** (fuzzing) and gated with **PactFlow `can-i-deploy`** before
+release. DDD guardrails ensure the generated code doesn't, say, let the refund
+Entity reach directly into the Order Aggregate. When it's ready, it drops into
+the running canvas in place of the fake — and the rest of the system, still
+partly simulated, never notices, because the contract never changed. The Refund
+Ledger and Communication Gateway cubes can follow later, implemented by
+different tools or teams, in any order.
 
 ## What the example demonstrates
 
@@ -101,5 +110,8 @@ simulated, never notices, because the contract never changed.
 - One **contract** drives the fake, the UI, the real code, the tests, and the
   sync→async event.
 - Real code replaces fakes **one node at a time**, never breaking the running whole.
+- A fully mapped capability is a **cube** — self-contained enough to hand to an
+  AI coding app for implementation, and to redeploy independently of its
+  neighbours.
 - Every artifact traces back up to "Dana wants her money back" — the business
   reason at the top of the zoom.

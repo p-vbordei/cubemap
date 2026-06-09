@@ -9,7 +9,7 @@
   <a href="https://github.com/p-vbordei/dsl"><img src="https://img.shields.io/badge/companion-dsl%20lexicon-6a5a8c" alt="companion: dsl"></a>
 </p>
 
-<p align="center"><i>A Claude skill for going to a client, mapping how their business actually works,<br>and turning it into functional requirements for an AI-driven organisation — then a simulation, then real code.</i></p>
+<p align="center"><i>A Claude skill for going to a client, mapping how their business actually works,<br>and turning it into functional requirements, a running simulation, and finally <b>cubes</b> —<br>self-contained capability packages an AI coding app can implement, redeploying the<br>organisation (or any part of it) as an AI-native one.</i></p>
 
 ---
 
@@ -25,9 +25,10 @@ So `cubemap` starts there. You sit with the people who run the business and draw
 
 - **Map the business with the people who run it.** Event Storming on a shared canvas: capabilities, the events between them, and the rules they live by — in the client's own words.
 - **Virtualize early — you don't need all the data first.** The moment a contract exists, stand up a *fake* that obeys it and serves synthetic data. The whole flow is clickable before anything is built.
-- **Enrich progressively.** As real examples arrive (an Excel export, a receipt, a report), feed them in; the simulation and the written-up process converge on reality, iteration by iteration.
+- **Enrich progressively — and register everything.** As real examples and templates arrive (an Excel export, a blank invoice form, a receipt, a report), each one is documented in an evidence register and fed in; the simulation and the written-up process converge on reality, iteration by iteration.
 - **Make illegal states impossible.** Business rules become statechart guards and contract constraints — something the system *cannot* violate, not something a developer must remember.
 - **One source of truth for meaning and structure.** A shared lexicon of the client's vocabulary + a single contract per boundary keep business and code reading the same model.
+- **End with cubes, not a report.** Each fully mapped capability — story, requirements, contracts, statecharts, fakes, evidence — is a self-contained **cube** precise enough to hand to an AI coding app (Claude Code, Lovable, v0, Cursor…) with a one-sentence brief. The organisation gets redeployed, cube by cube, as an AI-native one.
 
 ## Four altitudes, one map
 
@@ -42,7 +43,7 @@ Work top-down. Each level takes the one above as its input; you never introduce 
 | **L1 · Macro** | CEO / domain expert | Business capabilities, events, policies — the "why" |
 | **L2 · Meso** | Architect | Systems (C4), contracts, **live fakes** on synthetic data |
 | **L3 · Micro** | Engineer / UX | Behaviour as statecharts, wired to the fakes |
-| **L4 · Atomic** | Engineer | Real code that honours the contracts & statecharts above |
+| **L4 · Atomic** | Engineer / AI coding app | Real code that honours the contracts & statecharts above |
 
 ## You don't wait for the data
 
@@ -61,13 +62,17 @@ This is the part most teams get wrong. A contract defines the *shape* of the dat
 - **Facilitated** — a consultant or architect runs it as a playbook with the client.
 - **Self-serve by a client manager** — hand the skill to a non-technical department manager and say *"talk to the AI until your processes are mapped."* The AI becomes the facilitator: it leads, they answer, and it keeps going until the map, the requirements, and the lexicon are complete. See [`references/guided-client-intake.md`](references/guided-client-intake.md).
 
+## From map to AI-native organisation
+
+The name is literal: the map is the organisation described as **cubes**. A cube is one business capability mapped all the way down — its story and narratives, its policies, its slice of the lexicon, its contracts, its fakes, its statecharts, and the registered client evidence behind them. Because cubes talk to each other only through contracts, each one can be implemented independently: hand a cube to an AI coding app with *"implement this against these contracts and statecharts; the acceptance criteria are your tests"* and it drops into the running system in place of its fake. Redeployment is picking cubes up and standing them back up, AI-native, one at a time — see [`references/functional-requirements.md`](references/functional-requirements.md).
+
 ## Speak the client's language
 
 `cubemap` builds the client's vocabulary as it maps. Its companion, the [**`dsl` skill — Domain-Shared Lexicon**](https://github.com/p-vbordei/dsl), stores and reloads that vocabulary as a `LEXICON.md` so the AI always uses the client's exact terms — never quietly swapping *Heat* for *batch* and carrying the wrong meaning downstream. Use the two together.
 
-## Visual by default
+## Visual by default, HTML by rule
 
-Explanations are **purpose-built SVG**, never Mermaid or walls of text, designed to match how people actually read — one idea, one picture, a story spine. The preferred deliverable is a **scrollytelling editorial explainer** (warm paper palette, semantic colours, dark mode, scroll-reveal). A ready-to-adapt scaffold ships at [`assets/scrollytelling-template.html`](assets/scrollytelling-template.html); the conventions live in [`references/visual-communication.md`](references/visual-communication.md).
+Explanations are **purpose-built SVG**, never Mermaid or walls of text, designed to match how people actually read — one idea, one picture, a story spine. Everything a stakeholder reads ships as **HTML, not Markdown**: the preferred deliverable is a **scrollytelling editorial explainer** (warm paper palette, semantic colours, dark mode, scroll-reveal), and every deliverable is a **single self-contained file** — responsive enough to read on a phone, dependency-free enough to attach to an e-mail and forward. A ready-to-adapt scaffold ships at [`assets/scrollytelling-template.html`](assets/scrollytelling-template.html); the conventions live in [`references/visual-communication.md`](references/visual-communication.md).
 
 The visuals above are a taste of the house style: flat vector, warm paper palette, and colour used to *mean* something — **blue = data**, **amber = decide/act**, **green = ok**, **clay = danger**, **violet = AI/automation**.
 
@@ -77,7 +82,8 @@ The visuals above are a taste of the house style: flat vector, warm paper palett
 cubemap/
 ├── SKILL.md                          # the skill: philosophy, 4-level workflow, tooling
 ├── assets/
-│   └── scrollytelling-template.html  # editorial explainer scaffold
+│   ├── scrollytelling-template.html      # editorial explainer scaffold
+│   └── evidence-register-template.html   # the register of client-provided artifacts
 ├── docs/                             # README artwork (these SVGs)
 └── references/                       # loaded on demand, by zoom level
     ├── guided-client-intake.md           # self-serve mode for a client manager

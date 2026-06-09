@@ -6,12 +6,12 @@ in a wiki. Anyone opening the repo sees the "why" before the "how."
 
 ```text
 project/
-├── business-models/            # L1 MACRO — the "why" and "what"
-│   ├── capabilities.md         #   named business capabilities + value stream
-│   ├── event-storm.md          #   domain events in time order
-│   ├── policies.md             #   the "whenever ... then ..." rules
-│   ├── requirements.md         #   functional requirements (incl. AI/human/automation split)
-│   └── narratives/             #   per-process as-is stories, refined by enrichment
+├── business-models/            # L1 MACRO — the "why" and "what" (HTML deliverables: self-contained, responsive, e-mail sharable)
+│   ├── capabilities.html       #   named business capabilities + value stream
+│   ├── event-storm.html        #   domain events in time order
+│   ├── policies.html           #   the "whenever ... then ..." rules
+│   ├── requirements.html       #   functional requirements (incl. AI/human/automation split)
+│   └── narratives/             #   per-process as-is stories (one .html each), refined by enrichment
 │
 ├── contracts/                  # L2 MESO — the agreements (single source of truth)
 │   ├── openapi.yaml            #   sync REST contracts
@@ -19,8 +19,10 @@ project/
 │   └── style/.spectral.yaml    #   the governance ruleset
 │
 ├── examples/                   # raw client inputs feeding enrichment
+│   ├── register.html           #   the EVIDENCE REGISTER — every artifact documented (see below)
 │   ├── receipts/               #   e.g. the actual "receipt K" files
 │   ├── exports/                #   Excel/CSV the client exports from software X today
+│   ├── templates/              #   blank forms, invoice/report templates the client works with
 │   └── reports/                #   sample of report Y
 │
 ├── fakes/                      # L2 VIRTUALIZATION — runnable simulation
@@ -49,10 +51,21 @@ project/
 ## Why this shape
 
 - **`business-models/` at the root, not in a wiki.** It's the spec; it belongs in
-  version control next to the code it governs, reviewed on the same cadence.
+  version control next to the code it governs, reviewed on the same cadence. Its
+  documents are **self-contained HTML** (responsive, e-mail sharable — see
+  `references/visual-communication.md`), so any of them can be sent to a
+  stakeholder as-is and read on a phone.
 - **`examples/` and `fakes/` are separate.** `examples/` is what the client gave
   you (raw, untouched); `fakes/` is what you derived from it. The trail from
   evidence to simulation stays visible — essential for the enrichment loop.
+- **`examples/register.html` is the evidence register.** One entry per artifact
+  the client provides — template, export, receipt, report, screenshot: what it
+  is, who gave it and when, which process and step it belongs to, what structure
+  was extracted, and what it changed (contract field, policy, seed data,
+  requirement). Nothing the business hands over is absorbed silently; the
+  register is how every part of the model traces back to its evidence. Start
+  from the shipped `assets/evidence-register-template.html` (house style,
+  responsive, self-contained).
 - **`contracts/` is the single source of truth.** Fakes, generated types, tests,
   and docs all consume it. Nothing re-describes the system elsewhere.
 - **`machines/` is peer to `services/`.** Behaviour (L3) and implementation (L4)
@@ -69,8 +82,14 @@ project/
 - **Conformance gates deploys.** The CI pipeline runs the validation suite
   (`tests/`), and a conformance score below threshold blocks release. See
   `references/contract-drift-and-testing.md`.
-- **Examples are append-only evidence.** Never edit a client example to fit the
-  model; update the contract to fit the example, and keep the original.
+- **Examples are append-only, registered evidence.** Never edit a client example
+  to fit the model; update the contract to fit the example, and keep the
+  original. Every example gets a row in `examples/register.html` the day it
+  arrives — an unregistered artifact is treated as if it doesn't exist.
+- **A capability ships as a cube.** When a capability's requirements, contracts,
+  statecharts, fakes, and evidence are complete and consistent, that slice of
+  the repo is a self-contained handoff package an AI coding app (or a team) can
+  implement independently — see `references/functional-requirements.md`.
 
 ## Local bootstrapping
 

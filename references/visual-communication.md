@@ -142,6 +142,29 @@ The discipline behind the polish is the same as everywhere else: one scene = one
 idea + one picture, colour and motion used to mean things, and a story spine the
 reader rides top to bottom.
 
+## Deliverables are HTML — and they must travel well
+
+Anything a human will read ships as **HTML, not Markdown**. A `.md` file can't
+carry the inline SVG, the colour semantics, or the dark mode — and it renders as
+raw text when a business person opens it. Markdown stays only for machine-loaded
+internals (the skill's own files, `LEXICON.md`). Beyond format, every HTML
+deliverable must satisfy two transport requirements, because the realistic path
+of a deliverable is *attached to an e-mail and opened on whatever device is at
+hand*:
+
+- **Responsive — phone and laptop alike.** A `viewport` meta tag, a fluid
+  single-column layout (a max-width column that collapses gracefully), type in
+  `rem`/`clamp()` rather than fixed pixels, and SVGs sized by `viewBox` +
+  percentage width so diagrams scale down legibly. Before delivering, check the
+  document at ~375px width: every diagram readable, no horizontal scroll.
+- **E-mail sharable — one self-contained file.** All CSS and JS inline, all
+  diagrams inline SVG, no external images, fonts, or CDNs, no build step, no
+  server. The file must survive being forwarded three times and double-clicked
+  from a Downloads folder, offline, and still look right.
+
+The shipped `assets/scrollytelling-template.html` already has these properties;
+when adapting it, keep them.
+
 ## Practical note for the AI using this skill
 
 Prefer rendering visuals as inline SVG widgets when the channel supports it. For a

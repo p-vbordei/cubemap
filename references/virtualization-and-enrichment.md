@@ -44,6 +44,15 @@ Every time the client hands over something real — *"here's an actual receipt,"
 *"here's the Excel we export from software X today,"* *"here's the report template
 we email to Z"* — run this loop:
 
+0. **Register the artifact first.** Store the raw file untouched in `examples/`
+   and add an entry to the evidence register (`examples/register.html`): what it
+   is, who provided it and when, and which process/step of the map it belongs
+   to. Templates count as much as filled-in examples — a blank invoice template
+   defines the artifact's shape; a filled-in one adds real values and edge
+   cases. You'll complete the entry's "what it changed" field at the end of the
+   loop. Nothing the business hands over is absorbed silently. (No register in
+   the project yet? Create one from
+   `assets/evidence-register-template.html`.)
 1. **Read the example and extract structure.** An Excel becomes columns, types,
    value ranges, and a few representative rows. A receipt PDF becomes fields
    (vendor, date, line items, VAT, total). A report becomes its sections and the
@@ -73,15 +82,22 @@ Because the examples arrive as files — spreadsheets, receipts, exported report
 screenshots of legacy screens — the practical workflow is: hand the file to the
 AI, and have it do steps 1–4 above. Concretely the AI should:
 
+- Register the file in `examples/register.html` (provenance, process, step)
+  before doing anything else with it.
 - Parse the file and report the structure it found (don't just absorb it silently —
   show the client the columns/fields you extracted so they can correct you).
 - Propose contract changes as a diff, with a one-line reason for each.
 - Generate or update the synthetic/seed data so the fake reflects the example.
 - Update the written process narrative and flag any new hotspot or rule.
+- Close the register entry: record what this artifact changed — which contract
+  fields, which policy, which seed data, which requirement.
 
 Keep raw client examples in `examples/` in the repo and the derived seed data in
-`fakes/`, so there's a clear trail from "what the client gave us" to "what the
-simulation serves."
+`fakes/`, with the register as the index over both — a clear, auditable trail
+from "what the client gave us" to "what the simulation serves." When a
+capability is later handed off as a cube for implementation, the register
+travels with it: the implementer (human or AI coding app) can see the real
+evidence behind every data shape.
 
 ## Worked illustration: the receipt-to-report process
 

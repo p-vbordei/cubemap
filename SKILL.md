@@ -9,12 +9,17 @@ description: >-
   code, every technical choice tied to a business reason. A core move is
   virtualizing processes early — a runnable simulation from the model alone, on
   synthetic data, before all examples exist — then enriching it as real examples
-  (Excels, receipts) arrive. Communicate visually (SVG, not Mermaid/text) and via
-  storytelling. Use whenever someone wants to map a
-  business process with a client, design or architect a system, run Event
-  Storming, turn a discovery call into requirements,
-  simulate/mock something before building, or define API/event contracts before
-  code. Prefer it over jumping straight to code or DB schemas.
+  (Excels, templates, receipts) arrive, each one registered as evidence. The
+  endpoint: each capability becomes a self-contained "cube" (story, requirements,
+  contracts, statecharts, fakes) precise enough to hand to an AI coding app for
+  implementation — redeploying the organisation, or parts of it, as cubes of an
+  AI-native organisation. Communicate visually (SVG, not Mermaid/text) and via
+  storytelling; deliverables are self-contained, mobile-friendly, e-mail-sharable
+  HTML, never Markdown. Use whenever someone wants to map a business process with
+  a client, design or architect a system, run Event Storming, turn a discovery
+  call into requirements, simulate/mock something before building, or define
+  API/event contracts before code. Prefer it over jumping straight to code or DB
+  schemas.
 ---
 
 # cubemap — Infinite Zoom & Fakes-First
@@ -46,6 +51,15 @@ eventually build from. The map, the requirements, the simulation, and the system
 are four views of one thing, kept in sync. See
 `references/functional-requirements.md` for how to produce the requirements
 deliverable from the map.
+
+The endpoint of the mapping itself is a **complete functional mapping** — the
+requirements, the lexicon, the contracts, the statecharts, the fakes, and the
+registered client examples, all consistent with each other. That package is
+self-contained enough to be handed to an implementer — a human engineer *or an
+AI coding app* (Claude Code, Lovable, v0, Cursor, and the like) — which builds
+the real system against the contracts and statecharts, with the acceptance
+criteria as its tests. The business person never has to write a technical spec;
+the mapping *is* the spec.
 
 ## Who drives this — two ways to use it
 
@@ -99,6 +113,28 @@ and re-tells the design after you've left the room. When you must explain
 something, ask "what's the picture, and whose story is this?" before you write a
 sentence. See `references/visual-communication.md`.
 
+**Deliverables are HTML, never Markdown.** Anything a business person, operator,
+or stakeholder will read — the requirements, the capability write-ups, the
+process narratives, the evidence register, any explainer — is produced as a
+styled, self-contained **HTML document** (the scrollytelling house style, or a
+plain semantic-HTML document for registers and structured records), not as a
+`.md` file. Markdown is acceptable only for machine-loaded internals (this
+skill's own files, and `LEXICON.md`, whose format belongs to the companion `dsl`
+skill). HTML is what lets the deliverable carry the inline SVG, the colour
+semantics, and the dark mode that make it readable by the people it's for.
+
+Two hard properties follow from how these documents actually travel:
+
+- **Readable on mobile and desktop alike.** Business people open deliverables
+  from a phone as often as a laptop. Responsive single-column layout, a
+  `viewport` meta tag, fluid type, and SVGs that scale via `viewBox` (never
+  fixed pixel widths). Check every deliverable at phone width before calling it
+  done.
+- **E-mail sharable.** One self-contained `.html` file per deliverable — all
+  CSS, JS, and SVG inline, no external assets, fonts from system stacks or
+  graceful fallbacks, no build step and no server. It must survive being
+  attached to an e-mail, forwarded, and double-clicked from a Downloads folder.
+
 **Build the shared language as you go.** A business is mapped in its own words —
 *Heat*, *Tap*, *receipt K*, *report Y* — and the fastest way to derail the work is
 for the AI to quietly substitute its own generic terms for the client's. So as you
@@ -130,6 +166,19 @@ person should feel the system getting truer every time they hand you another
 example. (Practical loop and how to ingest spreadsheets: see
 `references/virtualization-and-enrichment.md`.)
 
+**Every client artifact is evidence — register it.** Business people don't hand
+over schemas; they hand over *templates and examples*: the Excel they export
+today, the invoice template, a filled-in form, the report they email to finance,
+a screenshot of the legacy screen. Each one is evidence about how the business
+really works, and none of it may be absorbed silently. Every artifact received
+is **documented and registered** in the project's evidence register
+(`examples/register.html`): what it is, who provided it and when, which process
+and step it belongs to, what structure was extracted from it, and what it
+changed (a contract field, a policy, a fake's seed data, a requirement). The
+register is what makes the enrichment loop auditable — anyone can trace any part
+of the model back to the piece of client evidence that justified it. A
+ready-to-adapt register ships at `assets/evidence-register-template.html`.
+
 **Make illegal states impossible.** Business rules belong in the model as
 structure, not in scattered `if` statements. Modeled as statecharts and contract
 constraints, a rule like "no refund before inspection" becomes something the
@@ -151,7 +200,7 @@ introduce detail at a lower level that contradicts a higher one.
 | **L1** | **Macro** | CEO / founder / domain expert | Business capabilities, value stream, domain events & policies | No tech, DBs, or APIs |
 | **L2** | **Meso** | Architect / tech lead | Systems & containers (C4 L2), the contracts between them, live fakes | No real implementations |
 | **L3** | **Micro** | Frontend / UX / service engineer | UI behavior & service logic as statecharts, wired to the fakes | No production data layer |
-| **L4** | **Atomic** | Implementing engineer | Real production code that honors the contracts and statecharts above | Don't drift from the model |
+| **L4** | **Atomic** | Implementing engineer / AI coding app | Real production code that honors the contracts and statecharts above | Don't drift from the model |
 
 **Macro (L1)** is where you sit with the client and map the business. This is the
 heart of the engagement and is worth real time — see
@@ -171,14 +220,30 @@ real flows through a system that has no real backend yet. See
 `references/statecharts-and-state-explosion.md`.
 
 **Atomic (L4)**: write the real code inside the node, against the contracts (L2)
-and statecharts (L3). Keep model and code in sync, and guard against architectural
-drift. See `references/round-trip-and-ddd-guardrails.md`.
+and statecharts (L3). This level does **not** have to be done by hand: once the
+functional mapping is complete through L3, it is a precise enough spec to hand
+to an AI coding app, which implements against the contracts with the acceptance
+criteria as its tests. Either way, keep model and code in sync and guard against
+architectural drift. See `references/round-trip-and-ddd-guardrails.md`.
 
 Continuous validation runs underneath all of it — contract drift detection,
 property-based fuzzing, conformance scoring — so the system can never silently
 diverge from the agreed design. See `references/contract-drift-and-testing.md`.
 
-## How to run an engagement
+## Cubes: the unit of redeployment
+
+The name *cubemap* is literal. A **cube** is one business capability mapped all
+the way down: its story and narratives (L1), its policies, its slice of the
+lexicon, its contracts and fakes (L2), its statecharts (L3), and its registered
+evidence — one self-contained, internally consistent block. The whole
+documentation effort — visual as much as possible, story-based, showing how the
+organisation actually interacts — exists so that at the end of the day the
+organisation, **or any part of it, can be redeployed as cubes of an AI-native
+organisation**: implement one cube with an AI coding app, run another on its
+fakes a while longer, give a third to a different team, recombine them — because
+each cube speaks to its neighbours only through its contracts, and carries its
+own "why" with it. The map is the organisation described as cubes; redeployment
+is picking cubes up and standing them back up, AI-native, one at a time.
 
 When someone brings you a business idea, a workflow, or "we need to build X,"
 default to this sequence. Adapt freely — if they arrive with the business already
@@ -201,11 +266,15 @@ mapped, start at Meso.
    flow runnable as early as possible.
 4. **Descend to Micro.** Model behavior as statecharts; wire interactive UI to the
    fakes. Walk the client/stakeholders through the *running* flow.
-5. **Enrich as examples arrive.** Every time the client hands over an Excel,
-   payload, or document, fold it into the fakes and the written-up process so the
-   simulation gets truer. Treat this as a standing loop, not a phase.
-6. **Descend to Atomic** only for the parts that are ready. Replace fakes with
-   real code, contract-tested in CI.
+5. **Enrich as examples arrive — and register every one.** Every time the client
+   hands over an Excel, a template, a payload, or a document, record it in the
+   evidence register (what it is, who gave it, which process step it feeds),
+   then fold it into the fakes and the written-up process so the simulation gets
+   truer. Treat this as a standing loop, not a phase.
+6. **Descend to Atomic** only for the cubes that are ready. Implement directly,
+   or hand the cube's mapping package (requirements + contracts + statecharts +
+   fakes + lexicon) to an AI coding app. Either way the result replaces the fake,
+   contract-tested in CI.
 7. **Keep the language and the thread visible.** Keep the lexicon current as new
    terms surface, and at every step be able to point from a line of code back up
    to the business capability it serves. That traceability — and a shared
@@ -241,10 +310,10 @@ the business *is* the spec. Full scaffold and rationale in
 ```text
 project/
 ├── LEXICON.md            # the Domain-Shared Lexicon — the client's words (loaded every session)
-├── business-models/      # L1 Macro: event storms, capabilities, policies (the "why")
+├── business-models/      # L1 Macro: event storms, capabilities, policies — HTML deliverables (the "why")
 ├── contracts/            # L2 Meso: openapi.yaml, asyncapi.yaml (the agreements)
 ├── fakes/                # L2 virtualization: mocks, simulators, synthetic + enriched payloads
-├── examples/             # raw client examples (Excel, payloads, docs) feeding enrichment
+├── examples/             # raw client examples (Excel, templates, docs) + register.html (the evidence register)
 ├── src/
 │   ├── flow/             # the React Flow canvas (the shared map)
 │   ├── machines/         # L3 Micro: XState statecharts (the behavior)

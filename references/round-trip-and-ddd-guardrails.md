@@ -1,10 +1,19 @@
 # Atomic (L4): Round-Trip Sync and DDD Guardrails
 
 At the Atomic level the fake is replaced by real production code, written inside
-the node and stored in the project's Git repo. Two problems appear the moment code
-and model coexist: keeping them in sync without clobbering hand-written code, and
-stopping developers from quietly violating the architecture agreed higher up. This
-file covers both.
+the node and stored in the project's Git repo. Who writes that code is an open
+choice: an engineer, or — increasingly the default — an **AI coding app** handed
+the capability's cube (requirements, contracts, statecharts, fakes, lexicon,
+evidence register; see `references/functional-requirements.md`). The handoff
+instruction is one sentence: *implement against these contracts and statecharts;
+the acceptance criteria are your tests; change neither.* Everything in this file
+applies to both kinds of implementer — an AI agent drifts from the model at
+least as easily as a junior developer does, so the sync machinery and the
+guardrails below are what keep either honest.
+
+Two problems appear the moment code and model coexist: keeping them in sync
+without clobbering hand-written code, and stopping implementers from quietly
+violating the architecture agreed higher up. This file covers both.
 
 ## Keeping model and code in sync (round-trip engineering)
 
