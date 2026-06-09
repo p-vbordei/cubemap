@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 430" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Virtualize early, enrich progressively: a fake matures from schema-only synthetic data, to example-seeded, to stateful simulation, to real implementation — fed by one contract and by real client examples.">
+  <rect width="1080" height="430" rx="18" fill="#faf8f3"/>
+  <rect x="0.75" y="0.75" width="1078.5" height="428.5" rx="17" fill="none" stroke="#e6e2d8" stroke-width="1.5"/>
+
+  <text x="40" y="46" font-family="Georgia, Palatino, serif" font-size="27" font-weight="700" fill="#2a2722">You don't wait for the data</text>
+  <text x="40" y="71" font-size="14" fill="#6f6d64">A fake is runnable on day one and gets truer with every real example. Stage 3 quietly replaces the others — the flow never stops.</text>
+
+  <!-- contract feeder -->
+  <rect x="40" y="92" width="1000" height="30" rx="15" fill="#f6e3dd" stroke="#b14d3b" stroke-width="1.2"/>
+  <text x="540" y="111" font-size="13" font-weight="700" fill="#b14d3b" text-anchor="middle">ONE CONTRACT defines the shape — every fake below obeys it</text>
+
+  <!-- stage cards -->
+  <g>
+    <!-- S0 -->
+    <rect x="40" y="150" width="225" height="150" rx="12" fill="#e2eef3" stroke="#37708f" stroke-width="1.4"/>
+    <text x="60" y="180" font-size="12" font-weight="700" fill="#37708f">STAGE 0</text>
+    <text x="60" y="205" font-family="Georgia, serif" font-size="19" font-weight="700" fill="#2a2722">Schema-only</text>
+    <text x="60" y="232" font-size="12.5" fill="#6f6d64">Synthetic data</text>
+    <text x="60" y="250" font-size="12.5" fill="#6f6d64">generated from</text>
+    <text x="60" y="268" font-size="12.5" fill="#6f6d64">the contract.</text>
+    <text x="60" y="290" font-size="11.5" fill="#37708f" font-weight="600">prove the flow connects</text>
+
+    <!-- S1 -->
+    <rect x="295" y="150" width="225" height="150" rx="12" fill="#f6ebd7" stroke="#bf7d2a" stroke-width="1.4"/>
+    <text x="315" y="180" font-size="12" font-weight="700" fill="#bf7d2a">STAGE 1</text>
+    <text x="315" y="205" font-family="Georgia, serif" font-size="19" font-weight="700" fill="#2a2722">Example-seeded</text>
+    <text x="315" y="232" font-size="12.5" fill="#6f6d64">Real examples</text>
+    <text x="315" y="250" font-size="12.5" fill="#6f6d64">(Excel, receipt)</text>
+    <text x="315" y="268" font-size="12.5" fill="#6f6d64">become the data.</text>
+    <text x="315" y="290" font-size="11.5" fill="#bf7d2a" font-weight="600">looks like their data</text>
+
+    <!-- S2 -->
+    <rect x="550" y="150" width="225" height="150" rx="12" fill="#e3f0e5" stroke="#4d8759" stroke-width="1.4"/>
+    <text x="570" y="180" font-size="12" font-weight="700" fill="#4d8759">STAGE 2</text>
+    <text x="570" y="205" font-family="Georgia, serif" font-size="19" font-weight="700" fill="#2a2722">Stateful sim</text>
+    <text x="570" y="232" font-size="12.5" fill="#6f6d64">Holds state and</text>
+    <text x="570" y="250" font-size="12.5" fill="#6f6d64">enforces the</text>
+    <text x="570" y="268" font-size="12.5" fill="#6f6d64">business rules.</text>
+    <text x="570" y="290" font-size="11.5" fill="#4d8759" font-weight="600">demo the rules, not just paths</text>
+
+    <!-- S3 -->
+    <rect x="805" y="150" width="225" height="150" rx="12" fill="#ece6f4" stroke="#6a5a8c" stroke-width="1.4"/>
+    <text x="825" y="180" font-size="12" font-weight="700" fill="#6a5a8c">STAGE 3</text>
+    <text x="825" y="205" font-family="Georgia, serif" font-size="19" font-weight="700" fill="#2a2722">Real code</text>
+    <text x="825" y="232" font-size="12.5" fill="#6f6d64">Production code,</text>
+    <text x="825" y="250" font-size="12.5" fill="#6f6d64">contract-tested,</text>
+    <text x="825" y="268" font-size="12.5" fill="#6f6d64">drops into place.</text>
+    <text x="825" y="290" font-size="11.5" fill="#6a5a8c" font-weight="600">go live, one node at a time</text>
+  </g>
+
+  <!-- arrows between -->
+  <g fill="#a6a399">
+    <path d="M267 225 l22 0 l0 -5 l10 8 l-10 8 l0 -5 l-22 0 z"/>
+    <path d="M522 225 l22 0 l0 -5 l10 8 l-10 8 l0 -5 l-22 0 z"/>
+    <path d="M777 225 l22 0 l0 -5 l10 8 l-10 8 l0 -5 l-22 0 z"/>
+  </g>
+
+  <!-- enrichment loop -->
+  <text x="40" y="350" font-size="13.5" fill="#6f6d64">↻ <tspan font-weight="700" fill="#2a2722">Enrichment loop:</tspan> each real example the client hands over walks a node toward the right — no waiting for complete data.</text>
+  <text x="40" y="372" font-size="12.5" fill="#a6a399">contract → synthetic fake → seeded fake → stateful sim → real adapter (which must match the fake)</text>
+</svg>
