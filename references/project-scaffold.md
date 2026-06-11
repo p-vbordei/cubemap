@@ -10,7 +10,9 @@ project/
 │   ├── capabilities.html       #   named business capabilities + value stream
 │   ├── event-storm.html        #   domain events in time order
 │   ├── policies.html           #   the "whenever ... then ..." rules
-│   ├── requirements.html       #   functional requirements (incl. AI/human/automation split)
+│   ├── requirements.html       #   functional requirements (incl. AI/human/automation split + per-process PROOF blocks)
+│   ├── decisions.html          #   the DECISION LOG — every model-changing decision: what, who, why, what it rippled to
+│   ├── closeout.html           #   the as-built dossier — produced by the closeout pass when a cube ships or the engagement wraps
 │   └── narratives/             #   per-process as-is stories (one .html each), refined by enrichment
 │
 ├── contracts/                  # L2 MESO — the agreements (single source of truth)
@@ -86,10 +88,19 @@ project/
   to fit the model; update the contract to fit the example, and keep the
   original. Every example gets a row in `examples/register.html` the day it
   arrives — an unregistered artifact is treated as if it doesn't exist.
+- **Decisions and proof are recorded the day they happen.** A model-changing
+  decision goes in `business-models/decisions.html` with its business reason; a
+  walkthrough, sign-off, or passing run goes in the proof block beside the
+  acceptance criterion it proves. A session never ends with the model ahead of
+  the documents — see `references/living-documentation.md`.
 - **A capability ships as a cube.** When a capability's requirements, contracts,
   statecharts, fakes, and evidence are complete and consistent, that slice of
   the repo is a self-contained handoff package an AI coding app (or a team) can
   implement independently — see `references/functional-requirements.md`.
+- **Nothing ends without a closeout.** A cube going live or the engagement
+  wrapping triggers the closeout pass: artifacts trued to as-built, proof
+  statuses final, and `business-models/closeout.html` produced — see
+  `references/project-closeout.md`.
 
 ## Local bootstrapping
 

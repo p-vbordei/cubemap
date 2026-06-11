@@ -75,11 +75,20 @@ Execution model:
 
 Contracts touched: <openapi/asyncapi operations once Meso is reached>
 Acceptance criteria: <observable, testable conditions of "done">
+Proof (per criterion): <stated → demonstrated (walkthrough: who, date, what was
+  confirmed/corrected) → contract-tested (suite, run) → verified in production>
 ```
 
 Acceptance criteria matter because they double as the assertions your simulation
 and tests check. "A report over €10,000 is never approved by Z alone" is both a
 requirement and a contract/statechart guard and a test case.
+
+The **proof block** records how far each criterion has actually been proven —
+the four-rung ladder above, mirroring the stages a fake matures through. Update
+it the day a rung is reached: when the client walks the simulation and confirms
+a flow, that walkthrough (who, when, what they confirmed, what they corrected)
+is written here, because it is the sign-off that later gates the cube handoff.
+See `references/living-documentation.md`.
 
 ## Turning each input type into requirements
 
@@ -107,11 +116,16 @@ Whatever the client gives you maps into the structure above:
 
 The requirements improve on the same enrichment loop as the simulation (see
 `references/virtualization-and-enrichment.md`). When a new Excel reveals a field
-or a rule, you update the contract, the fake, *and* the requirement together, so
-the three never disagree. Version the requirements alongside the contracts in the
-repo (`business-models/`). When you can run the simulation and it satisfies the
-acceptance criteria, the requirements are validated — not by review, but by a
-working system the client has clicked through.
+or a rule — or a decision in a meeting changes one — you update the contract,
+the fake, the requirement, and the statechart guard and narrative that carry the
+same rule, together, in the same session, so no view of the model ever disagrees
+with another (the ripple rule — `references/living-documentation.md`; the
+decision itself, with its business reason, goes in the decision log). Version
+the requirements alongside the contracts in the repo (`business-models/`). When
+you can run the simulation and it satisfies the acceptance criteria, the
+requirements are validated — not by review, but by a working system the client
+has clicked through — and that validation is recorded in the proof block the
+day it happens.
 
 ## The handoff: a cube an AI coding app can implement
 
@@ -149,4 +163,4 @@ The strongest sign-off isn't a stakeholder reading prose — it's the stakeholde
 walking the *running simulation* of their own process and agreeing it's right.
 Keep the written requirements tight and structured (the template above), and let
 the live fakes carry the weight of demonstrating behaviour. The document records
-the decisions; the simulation proves them.
+the decisions; the simulation proves them; the proof block records that it did.

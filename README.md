@@ -26,9 +26,11 @@ So `cubemap` starts there. You sit with the people who run the business and draw
 - **Map the business with the people who run it.** Event Storming on a shared canvas: capabilities, the events between them, and the rules they live by — in the client's own words.
 - **Virtualize early — you don't need all the data first.** The moment a contract exists, stand up a *fake* that obeys it and serves synthetic data. The whole flow is clickable before anything is built.
 - **Enrich progressively — and register everything.** As real examples and templates arrive (an Excel export, a blank invoice form, a receipt, a report), each one is documented in an evidence register and fed in; the simulation and the written-up process converge on reality, iteration by iteration.
+- **Document as you go — decisions and proof included.** Every model-changing decision lands in a decision log with its business reason; every client walkthrough, sign-off, and passing test is recorded against the acceptance criterion it proves. A session never ends with the model ahead of the documents.
 - **Make illegal states impossible.** Business rules become statechart guards and contract constraints — something the system *cannot* violate, not something a developer must remember.
 - **One source of truth for meaning and structure.** A shared lexicon of the client's vocabulary + a single contract per boundary keep business and code reading the same model.
 - **End with cubes, not a report.** Each fully mapped capability — story, requirements, contracts, statecharts, fakes, evidence — is a self-contained **cube** precise enough to hand to an AI coding app (Claude Code, Lovable, v0, Cursor…) with a one-sentence brief. The organisation gets redeployed, cube by cube, as an AI-native one.
+- **Close out what finishes.** A cube going live or the engagement wrapping triggers a closeout: everything trued to as-built, and a **closeout dossier** telling the story of what was built, the proof, what remains, and how to change the system from here. Works in reverse too — a project that's already finished can be documented after the fact, treating the built system itself as evidence.
 
 ## Four altitudes, one map
 
@@ -91,6 +93,8 @@ cubemap/
     ├── domain-shared-lexicon.md          # speaking the client's language
     ├── functional-requirements.md        # the deliverable
     ├── virtualization-and-enrichment.md  # simulate without complete data
+    ├── living-documentation.md           # document as you go: decisions, proof, the ripple rule
+    ├── project-closeout.md               # document a finished project: as-built truing + closeout dossier
     ├── contracts-and-fakes.md            # L2 — contracts + virtualization
     ├── statecharts-and-state-explosion.md # L3 — XState behaviour
     ├── contract-drift-and-testing.md     # continuous validation

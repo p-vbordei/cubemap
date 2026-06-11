@@ -71,6 +71,12 @@ we email to Z"* — run this loop:
    the simulation improve together.
 5. **Re-walk the flow with the client.** Show them the now-truer simulation.
    New examples and corrections fall out. Repeat.
+6. **Record the outcome of the re-walk.** What the client confirmed goes in
+   the proof block of the affected process (who walked it, when, what they
+   confirmed — it's the sign-off that later gates the cube handoff); what they
+   corrected feeds the next turn of this loop; any decision they made on the
+   spot goes in the decision log with its business reason. See
+   `references/living-documentation.md`.
 
 This is a *standing loop*, not a phase. The system is never "spec'd then built";
 it is continuously made more accurate until enough of it is at Stage 2 that

@@ -17,9 +17,11 @@ description: >-
   storytelling; deliverables are self-contained, mobile-friendly, e-mail-sharable
   HTML, never Markdown. Use whenever someone wants to map a business process with
   a client, design or architect a system, run Event Storming, turn a discovery
-  call into requirements, simulate/mock something before building, or define
-  API/event contracts before code. Prefer it over jumping straight to code or DB
-  schemas.
+  call into requirements, simulate/mock something before building, define
+  API/event contracts before code, keep documentation/specs/requirements/proof
+  updated as a build progresses, or document and close out a project after it is
+  finished (as-built record, including projects this method didn't build). Prefer
+  it over jumping straight to code or DB schemas.
 ---
 
 # cubemap — Infinite Zoom & Fakes-First
@@ -179,6 +181,32 @@ register is what makes the enrichment loop auditable — anyone can trace any pa
 of the model back to the piece of client evidence that justified it. A
 ready-to-adapt register ships at `assets/evidence-register-template.html`.
 
+**Documentation moves with the work — decisions and proof included.** The
+enrichment loop keeps the model true; this keeps the *record* true. Three
+kinds of things are written down the day they happen, never reconstructed
+later: every client **artifact** (the evidence register), every **decision**
+that changes the model — what changed, who decided, and the business reason —
+(the decision log, `business-models/decisions.html`), and every **proof**
+event — a stakeholder walking the simulation and confirming it, an acceptance
+criterion passing in CI or production (recorded in the proof block beside the
+criterion it proves). And because the map, the requirements, the simulation,
+and the system are four views of one model, a change to any view is a change
+to all of them *in the same session* — a working session never ends with the
+model ahead of the documents. See `references/living-documentation.md` for the
+decision log, the proof ladder, the ripple rule, and the session-close
+checklist.
+
+**A finished project gets closed out, not abandoned.** When a cube goes live,
+a phase ends, or the engagement wraps, run the closeout: true every artifact
+up to as-built (contracts drift-checked against production, proof statuses
+final, register and decision log complete), then produce the **closeout
+dossier** (`business-models/closeout.html`) — the as-built story, the
+delivered human/AI/automation split, the proof, what remains, and how the
+client changes the system after you leave. The same move runs in reverse: a
+project that is already finished — even one this method didn't build — can be
+documented after the fact by treating the built system itself as evidence.
+See `references/project-closeout.md`.
+
 **Make illegal states impossible.** Business rules belong in the model as
 structure, not in scattered `if` statements. Modeled as statecharts and contract
 constraints, a rule like "no refund before inspection" becomes something the
@@ -271,14 +299,25 @@ mapped, start at Meso.
    evidence register (what it is, who gave it, which process step it feeds),
    then fold it into the fakes and the written-up process so the simulation gets
    truer. Treat this as a standing loop, not a phase.
-6. **Descend to Atomic** only for the cubes that are ready. Implement directly,
+6. **Record decisions and proof in the same motion.** When a session changes
+   the model — a decision moves a threshold, a walkthrough confirms a flow —
+   the decision goes in the decision log with its business reason, the
+   walkthrough goes in the proof block, and every affected view (requirement,
+   narrative, contract, fake, statechart guard, lexicon) is updated before the
+   session ends. Run the session-close checklist in
+   `references/living-documentation.md`.
+7. **Descend to Atomic** only for the cubes that are ready. Implement directly,
    or hand the cube's mapping package (requirements + contracts + statecharts +
    fakes + lexicon) to an AI coding app. Either way the result replaces the fake,
    contract-tested in CI.
-7. **Keep the language and the thread visible.** Keep the lexicon current as new
+8. **Keep the language and the thread visible.** Keep the lexicon current as new
    terms surface, and at every step be able to point from a line of code back up
    to the business capability it serves. That traceability — and a shared
    vocabulary everyone agrees on — is as much the deliverable as the software is.
+9. **Close out what finishes.** A cube going live, a phase ending, or the
+   engagement wrapping triggers the closeout pass: true everything to as-built
+   and produce the closeout dossier — the story of what was built, the proof,
+   what remains, and the handover. See `references/project-closeout.md`.
 
 ## Choosing tools
 
@@ -310,7 +349,8 @@ the business *is* the spec. Full scaffold and rationale in
 ```text
 project/
 ├── LEXICON.md            # the Domain-Shared Lexicon — the client's words (loaded every session)
-├── business-models/      # L1 Macro: event storms, capabilities, policies — HTML deliverables (the "why")
+├── business-models/      # L1 Macro: event storms, capabilities, policies, requirements (with proof blocks),
+│                         #   decisions.html (the decision log), closeout.html — HTML deliverables (the "why")
 ├── contracts/            # L2 Meso: openapi.yaml, asyncapi.yaml (the agreements)
 ├── fakes/                # L2 virtualization: mocks, simulators, synthetic + enriched payloads
 ├── examples/             # raw client examples (Excel, templates, docs) + register.html (the evidence register)
@@ -347,6 +387,15 @@ preemptively.
 - `references/virtualization-and-enrichment.md` — **Simulating without complete
   data, and the progressive-enrichment loop**: bootstrapping fakes from the model,
   ingesting Excels and sample payloads, converging the simulation on reality.
+- `references/living-documentation.md` — **Documenting as you go**: the decision
+  log, recording proof (walkthroughs, sign-offs, passing tests) against
+  acceptance criteria, the ripple rule that keeps every view of the model
+  agreeing, and the session-close checklist. Consult in any working session
+  that changes the model.
+- `references/project-closeout.md` — **Documenting a finished project**: the
+  as-built truing pass and closeout dossier when a cube ships or the engagement
+  ends, the handover, and retro-documentation of a project that was built
+  without this method.
 - `references/contracts-and-fakes.md` — Meso: contract-first design, the four
   contract types, virtualization tools, and the sync-to-async trick.
 - `references/statecharts-and-state-explosion.md` — Micro: XState v5, Harel

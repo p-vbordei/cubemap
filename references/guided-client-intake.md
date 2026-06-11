@@ -89,7 +89,10 @@ manager you've reached it:
 
 When all six hold for a process, summarise it back, save the artifacts (map,
 requirements entry, lexicon terms, evidence-register entries for everything they
-shared), and offer the manager the next process to map or a wrap-up. Written
+shared, decision-log entries for the choices they made, and a proof-block note
+that the manager confirmed the picture), and offer the manager the next process
+to map or a wrap-up (for the wrap-up, run the closeout pass —
+`references/project-closeout.md`). Written
 artifacts the manager will see are HTML — responsive and e-mail sharable, so
 they can forward the mapped process to a colleague from their phone (see
 `references/visual-communication.md`). If something can't be resolved (they don't know an answer, or two
