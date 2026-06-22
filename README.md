@@ -66,6 +66,10 @@ This is the part most teams get wrong. A contract defines the *shape* of the dat
 
 ## From map to AI-native organisation
 
+<p align="center">
+  <img src="docs/cubes.svg" alt="Anatomy of a cube — story, policies, contracts and fakes, statecharts, evidence — handed to an AI coding app and redeployed cube by cube" width="900">
+</p>
+
 The name is literal: the map is the organisation described as **cubes**. A cube is one business capability mapped all the way down — its story and narratives, its policies, its slice of the lexicon, its contracts, its fakes, its statecharts, and the registered client evidence behind them. Because cubes talk to each other only through contracts, each one can be implemented independently: hand a cube to an AI coding app with *"implement this against these contracts and statecharts; the acceptance criteria are your tests"* and it drops into the running system in place of its fake. Redeployment is picking cubes up and standing them back up, AI-native, one at a time — see [`references/functional-requirements.md`](references/functional-requirements.md).
 
 ## Speak the client's language
@@ -74,7 +78,7 @@ The name is literal: the map is the organisation described as **cubes**. A cube 
 
 ## Visual by default, HTML by rule
 
-Explanations are **purpose-built SVG**, never Mermaid or walls of text, designed to match how people actually read — one idea, one picture, a story spine. Everything a stakeholder reads ships as **HTML, not Markdown**: the preferred deliverable is a **scrollytelling editorial explainer** (warm paper palette, semantic colours, dark mode, scroll-reveal), and every deliverable is a **single self-contained file** — responsive enough to read on a phone, dependency-free enough to attach to an e-mail and forward. A ready-to-adapt scaffold ships at [`assets/scrollytelling-template.html`](assets/scrollytelling-template.html); the conventions live in [`references/visual-communication.md`](references/visual-communication.md).
+Explanations are **purpose-built SVG**, never Mermaid or walls of text, designed to match how people actually read — one idea, one picture, a story spine. Everything a stakeholder reads ships as **HTML, not Markdown**: the preferred deliverable is a **scrollytelling editorial explainer** (warm paper palette, semantic colours, dark mode, scroll-reveal), and every deliverable is a **single self-contained file** — responsive enough to read on a phone, dependency-free enough to attach to an e-mail and forward. A ready-to-adapt scaffold ships at [`assets/scrollytelling-template.html`](assets/scrollytelling-template.html); the conventions live in [`references/visual-communication.md`](references/visual-communication.md). The method itself, told this way, is the narrated explainer at [`docs/cubemap-explainer.html`](docs/cubemap-explainer.html) — open it in a browser.
 
 The visuals above are a taste of the house style: flat vector, warm paper palette, and colour used to *mean* something — **blue = data**, **amber = decide/act**, **green = ok**, **clay = danger**, **violet = AI/automation**.
 
@@ -82,11 +86,14 @@ The visuals above are a taste of the house style: flat vector, warm paper palett
 
 ```text
 cubemap/
-├── SKILL.md                          # the skill: philosophy, 4-level workflow, tooling
+├── SKILL.md                          # the skill: routing, hard invariants, 4-level workflow, tooling
 ├── assets/
-│   ├── scrollytelling-template.html      # editorial explainer scaffold
+│   ├── scrollytelling-template.html      # editorial explainer scaffold (house style)
 │   └── evidence-register-template.html   # the register of client-provided artifacts
-├── docs/                             # README artwork (these SVGs)
+├── docs/                             # README artwork + the narrated explainer + portability notes
+│   ├── hero·zoom·loop·modes·cubes.svg    # README diagrams (flat vector, warm palette)
+│   ├── cubemap-explainer.html            # the method, told as a scrollytelling article
+│   └── HARNESSES.md                      # multi-harness install & authoring notes
 └── references/                       # loaded on demand, by zoom level
     ├── guided-client-intake.md           # self-serve mode for a client manager
     ├── macro-business-mapping.md         # L1 — Event Storming the business
@@ -122,6 +129,8 @@ cp -R ~/src/cubemap/SKILL.md ~/src/cubemap/references ~/src/cubemap/assets \
 ```
 
 Skills are auto-discovered from `~/.claude/skills/<name>/SKILL.md` on the next session. Then just describe a business process and ask the AI to map it.
+
+**Other harnesses (Codex, Gemini, Cursor, Copilot, OpenCode…)** — `cubemap` is portable prose; only the install location changes. Copy the same `SKILL.md` + `references/` + `assets/` into `.agents/skills/cubemap/` — that one folder is read by Codex natively and, as a fallback, by Gemini, Cursor, Copilot, and OpenCode, so it reaches them all at once. Nothing in the frontmatter needs editing (only `name` + `description` are load-bearing, and they're universal). The companion **`dsl`** skill must travel alongside it, the same way. Step-by-step paths, the portable-frontmatter floor, the per-harness notes, and the `dsl` requirement live in [`docs/HARNESSES.md`](docs/HARNESSES.md).
 
 ## License
 

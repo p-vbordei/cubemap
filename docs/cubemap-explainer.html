@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cubemap — map the business, then build it one cube at a time</title>
+<style>
+  :root{
+    --bg:#faf8f3; --surface:#ffffff; --ink:#2a2722; --muted:#6f6d64; --faint:#a6a399;
+    --line:#e6e2d8;
+    --amber:#bf7d2a; --amber-s:#f6ebd7; --blue:#37708f; --blue-s:#e2eef3;
+    --green:#4d8759; --green-s:#e3f0e5; --clay:#b14d3b; --clay-s:#f6e3dd;
+    --violet:#6a5a8c; --violet-s:#ece6f4;
+    --contract:#c9b08a;
+    --serif:"Iowan Old Style",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#161512; --surface:#211f1a; --ink:#ece8dd; --muted:#a8a59a; --faint:#76736a;
+      --line:#322f28;
+      --amber:#dba055; --amber-s:#352a18; --blue:#7fb6d2; --blue-s:#1f2e37;
+      --green:#8cc79a; --green-s:#1d3324; --clay:#d77f6b; --clay-s:#37241f;
+      --violet:#b3a4d6; --violet-s:#282138; --contract:#8a795c; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+  /* progress + rail */
+  #bar{position:fixed;top:0;left:0;height:3px;background:var(--amber);width:0;z-index:50;transition:width .1s linear}
+  #rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:11px}
+  #rail a{width:9px;height:9px;border-radius:50%;background:var(--line);border:1px solid var(--faint);display:block;position:relative;transition:all .2s}
+  #rail a.on{background:var(--amber);border-color:var(--amber);transform:scale(1.35)}
+  #rail a span{position:absolute;right:18px;white-space:nowrap;font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:2px 7px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .15s}
+  #rail a:hover span{opacity:1}
+  @media (max-width:1080px){#rail{display:none}}
+
+  .chap{max-width:820px;margin:0 auto;padding:78px 28px;min-height:62vh;display:flex;flex-direction:column;justify-content:center;border-top:1px solid var(--line)}
+  .chap:first-of-type{border-top:none}
+  .kick{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .kick i{display:inline-block;width:26px;height:1px;background:var(--amber)}
+  h1{font-family:var(--serif);font-size:clamp(40px,8vw,76px);line-height:1.02;font-weight:600;margin:0 0 18px;letter-spacing:-.02em}
+  h2{font-family:var(--serif);font-size:clamp(27px,4.6vw,40px);line-height:1.12;font-weight:600;margin:0 0 14px;letter-spacing:-.01em}
+  .lede{font-family:var(--serif);font-size:clamp(19px,2.4vw,23px);line-height:1.5;color:var(--ink);max-width:30em;margin:0 0 6px}
+  .cap{font-size:16px;color:var(--muted);max-width:34em;margin:14px 0 0}
+  .cap b{color:var(--ink);font-weight:600}
+  figure{margin:30px 0 0}
+  svg{width:100%;height:auto;display:block;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px}
+  figcaption{font-size:13.5px;color:var(--faint);margin-top:10px;text-align:center}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  .hero{min-height:88vh}
+  .scroll-hint{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-top:48px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;font-size:13px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  /* svg helpers */
+  .box{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
+  .amber{fill:var(--amber-s);stroke:var(--amber);stroke-width:1.2}
+  .blue{fill:var(--blue-s);stroke:var(--blue);stroke-width:1.2}
+  .green{fill:var(--green-s);stroke:var(--green);stroke-width:1.2}
+  .clay{fill:var(--clay-s);stroke:var(--clay);stroke-width:1.2}
+  .violet{fill:var(--violet-s);stroke:var(--violet);stroke-width:1.2}
+  text{font-family:var(--sans);fill:var(--ink)}
+  .t{font-size:14px} .ts{font-size:12px;fill:var(--muted)} .tb{font-size:14px;font-weight:600}
+  .lab{font-size:12px;fill:var(--muted)}
+  .t-amber{fill:var(--amber)} .t-blue{fill:var(--blue)} .t-green{fill:var(--green)} .t-clay{fill:var(--clay)} .t-violet{fill:var(--violet)}
+  .arr{stroke:var(--faint);stroke-width:1.6;fill:none}
+  .flow{stroke:var(--blue);stroke-width:2.6;fill:none}
+  .dash{stroke-dasharray:5 4}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="rail">
+  <a href="#hero" data-l="0"><span>cubemap</span></a>
+  <a href="#c1" data-l="1"><span>A sentence is a system</span></a>
+  <a href="#c2" data-l="2"><span>Map it with them</span></a>
+  <a href="#c3" data-l="3"><span>Four altitudes</span></a>
+  <a href="#c4" data-l="4"><span>Don't wait for data</span></a>
+  <a href="#c5" data-l="5"><span>Enrich &amp; register</span></a>
+  <a href="#c6" data-l="6"><span>Illegal states</span></a>
+  <a href="#c7" data-l="7"><span>It ends in cubes</span></a>
+  <a href="#c8" data-l="8"><span>Redeploy AI-native</span></a>
+  <a href="#c9" data-l="9"><span>Two ways to use it</span></a>
+</div>
+
+<!-- HERO -->
+<section class="chap hero" id="hero">
+  <div class="kick reveal"><i></i>the infinite zoom &amp; fakes-first method</div>
+  <h1 class="reveal">Map the business.<br>Then build it —<br>one cube at a time.</h1>
+  <p class="lede reveal">cubemap takes how an organisation actually works — a conversation, an Excel, a receipt processed by hand — and turns it into functional requirements, a running simulation, and finally <b>cubes</b>: self-contained capability packages an AI coding app can implement.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 200" role="img" aria-label="The people and their business become a shared map, then a running simulation, then cubes an AI can implement.">
+      <rect x="34" y="64" width="156" height="72" rx="11" class="blue"/>
+      <circle cx="74" cy="100" r="13" class="box"/><circle cx="74" cy="95" r="4.5" fill="var(--blue)"/><path d="M64 112 q10 -11 20 0" fill="var(--blue)"/>
+      <circle cx="108" cy="100" r="13" class="box"/><circle cx="108" cy="95" r="4.5" fill="var(--blue)"/><path d="M98 112 q10 -11 20 0" fill="var(--blue)"/>
+      <text class="ts" x="112" y="156" text-anchor="middle">the business + its people</text>
+
+      <rect x="234" y="64" width="150" height="72" rx="11" class="box"/>
+      <circle cx="268" cy="92" r="7" class="amber"/><circle cx="350" cy="92" r="7" class="blue"/><circle cx="309" cy="116" r="7" class="green"/>
+      <line class="arr" x1="275" y1="92" x2="343" y2="92"/><line class="arr" x1="272" y1="98" x2="303" y2="113"/><line class="arr" x1="343" y1="98" x2="315" y2="113"/>
+      <text class="ts" x="309" y="156" text-anchor="middle">the shared map</text>
+
+      <rect x="428" y="64" width="150" height="72" rx="11" class="green"/>
+      <polygon points="494,84 494,116 520,100" fill="var(--green)"/>
+      <rect x="528" y="86" width="34" height="6" rx="3" fill="var(--green)" opacity="0.5"/><rect x="528" y="97" width="26" height="6" rx="3" fill="var(--green)" opacity="0.5"/><rect x="528" y="108" width="30" height="6" rx="3" fill="var(--green)" opacity="0.5"/>
+      <text class="ts" x="503" y="156" text-anchor="middle">a running simulation</text>
+
+      <g transform="translate(700,100)">
+        <polygon points="-34,-20 0,-38 34,-20 0,-2" class="amber"/>
+        <polygon points="-34,-20 -34,22 0,40 0,-2" class="blue"/>
+        <polygon points="34,-20 34,22 0,40 0,-2" class="green"/>
+      </g>
+      <text class="ts" x="700" y="156" text-anchor="middle">cubes</text>
+
+      <line class="arr" x1="192" y1="100" x2="232" y2="100" marker-end="url(#ah)"/>
+      <line class="arr" x1="386" y1="100" x2="426" y2="100" marker-end="url(#ah)"/>
+      <line class="arr" x1="580" y1="100" x2="652" y2="100" marker-end="url(#ah)"/>
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+  </figure>
+  <div class="scroll-hint reveal">scroll to begin ↓</div>
+</section>
+
+<!-- CH1 -->
+<section class="chap" id="c1">
+  <div class="kick reveal"><i></i>chapter one · why builds fail</div>
+  <h2 class="reveal">A sentence is a whole system in disguise.</h2>
+  <p class="cap reveal">A team rarely fails because the code was bad. It fails because <b>nobody ever drew the business clearly enough</b> for everyone — the client included — to point at it and say <i>"yes, that's how it works."</i> Take one ordinary moment and it unfolds into actors, steps, and a rule nobody wrote down.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 300" role="img" aria-label="The sentence 'Dana's order arrived scratched, she wants her money back' unfolds into a chain of actors and steps with a hidden approval policy.">
+      <rect x="70" y="26" width="680" height="46" rx="10" class="amber"/>
+      <text class="tb" x="410" y="48" text-anchor="middle">"Dana's order arrived scratched — she wants her money back."</text>
+      <text class="ts" x="410" y="65" text-anchor="middle">one human moment</text>
+      <line class="arr dash" x1="410" y1="72" x2="410" y2="104" marker-end="url(#a1)"/>
+      <text class="lab" x="470" y="93" text-anchor="middle">unfolds into…</text>
+
+      <rect x="40" y="120" width="130" height="58" rx="10" class="box"/><text class="tb" x="105" y="146" text-anchor="middle">Dana</text><text class="ts" x="105" y="164" text-anchor="middle">requests a return</text>
+      <rect x="210" y="120" width="140" height="58" rx="10" class="blue"/><text class="tb" x="280" y="146" text-anchor="middle">Returns desk</text><text class="ts" x="280" y="164" text-anchor="middle">logs the request</text>
+      <rect x="390" y="120" width="140" height="58" rx="10" class="blue"/><text class="tb" x="460" y="146" text-anchor="middle">Inspection</text><text class="ts" x="460" y="164" text-anchor="middle">checks the item</text>
+      <rect x="570" y="120" width="150" height="58" rx="10" class="green"/><text class="tb" x="645" y="146" text-anchor="middle">Finance</text><text class="ts" x="645" y="164" text-anchor="middle">issues the refund</text>
+
+      <line class="arr" x1="170" y1="149" x2="208" y2="149" marker-end="url(#a1)"/>
+      <line class="arr" x1="350" y1="149" x2="388" y2="149" marker-end="url(#a1)"/>
+      <line class="arr" x1="530" y1="149" x2="568" y2="149" marker-end="url(#a1)"/>
+
+      <rect x="500" y="222" width="290" height="50" rx="10" class="clay"/>
+      <text class="tb t-clay" x="645" y="244" text-anchor="middle">policy nobody wrote down</text>
+      <text class="ts" x="645" y="261" text-anchor="middle">refunds over €10,000 go to a manager</text>
+      <line class="arr dash" x1="645" y1="178" x2="645" y2="220" stroke="var(--clay)" marker-end="url(#a1c)"/>
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="a1c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      </defs>
+    </svg>
+    <figcaption>The work is pulling that apart — out loud, with the people who live it — before any of it is expensive to get wrong.</figcaption>
+  </figure>
+</section>
+
+<!-- CH2 -->
+<section class="chap" id="c2">
+  <div class="kick reveal"><i></i>chapter two · start at the top</div>
+  <h2 class="reveal">Draw it with the people who run it.</h2>
+  <p class="cap reveal">The first altitude is the business itself. You run an <b>Event Storming</b> session on a shared canvas: the things that <b>happen</b> (past-tense events), the <b>rules</b> they live by, and the <b>questions nobody can answer yet</b> — all in the client's own words. The map is the artifact everyone can read, the boardroom and the engineer alike.</p>
+  <div class="legend reveal">
+    <span><i style="background:var(--amber)"></i>event</span>
+    <span><i style="background:var(--blue)"></i>policy / rule</span>
+    <span><i style="background:var(--clay)"></i>open question</span>
+  </div>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 230" role="img" aria-label="An Event Storming strip: an actor, three past-tense events, a policy callout and an unresolved hotspot.">
+      <circle cx="58" cy="96" r="16" class="box"/><circle cx="58" cy="90" r="5.5" fill="var(--ink)"/><path d="M44 112 q14 -14 28 0" fill="var(--ink)"/>
+      <text class="ts" x="58" y="134" text-anchor="middle">Dana</text>
+
+      <rect x="110" y="72" width="160" height="48" rx="8" class="amber"/><text class="tb" x="190" y="101" text-anchor="middle">Return requested</text>
+      <rect x="300" y="72" width="160" height="48" rx="8" class="amber"/><text class="tb" x="380" y="101" text-anchor="middle">Item inspected</text>
+      <rect x="490" y="72" width="160" height="48" rx="8" class="amber"/><text class="tb" x="570" y="101" text-anchor="middle">Refund issued</text>
+
+      <line class="arr" x1="86" y1="96" x2="108" y2="96" marker-end="url(#a2)"/>
+      <line class="arr" x1="270" y1="96" x2="298" y2="96" marker-end="url(#a2)"/>
+      <line class="arr" x1="460" y1="96" x2="488" y2="96" marker-end="url(#a2)"/>
+
+      <rect x="300" y="150" width="240" height="44" rx="8" class="blue"/>
+      <text class="tb t-blue" x="420" y="170" text-anchor="middle">refunds only after inspection</text>
+      <text class="ts" x="420" y="186" text-anchor="middle">the rule that governs the step above</text>
+      <line class="arr dash" x1="380" y1="120" x2="380" y2="148" stroke="var(--blue)"/>
+
+      <rect x="680" y="72" width="110" height="48" rx="8" class="clay"/>
+      <text class="ts t-clay" x="735" y="92" text-anchor="middle">who approves</text>
+      <text class="ts t-clay" x="735" y="108" text-anchor="middle">over €10k?</text>
+      <text class="lab" x="735" y="138" text-anchor="middle">unresolved</text>
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>Don't leave this level until the client recognises their own business in the picture. The loud unknowns are where the real requirements hide.</figcaption>
+  </figure>
+</section>
+
+<!-- CH3 -->
+<section class="chap" id="c3">
+  <div class="kick reveal"><i></i>chapter three · the spine</div>
+  <h2 class="reveal">One map. Four altitudes.</h2>
+  <p class="cap reveal">Like Google Maps for a system: stand at country level and see whole capabilities, then zoom to the street level of a single function. Each altitude takes the one above as its input, and <b>you never add detail below that contradicts the picture above</b>. One contract threads through all four — so a line of code always traces back to a business reason.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 320" role="img" aria-label="Four stacked altitude bands — Macro, Meso, Micro, Atomic — linked by a single contract through-line on the right.">
+      <!-- L1 -->
+      <rect x="30" y="20" width="690" height="62" rx="10" class="blue"/>
+      <rect x="30" y="20" width="64" height="62" rx="10" fill="var(--blue)"/><text x="62" y="50" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">L1</text><text x="62" y="67" fill="#fff" font-size="9" text-anchor="middle" opacity="0.85">MACRO</text>
+      <text class="tb" x="110" y="46">Map the business — capabilities, events, policies</text><text class="ts" x="110" y="66">CEO / domain expert · the "why", in the client's words</text>
+      <!-- L2 -->
+      <rect x="30" y="92" width="690" height="62" rx="10" class="amber"/>
+      <rect x="30" y="92" width="64" height="62" rx="10" fill="var(--amber)"/><text x="62" y="122" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">L2</text><text x="62" y="139" fill="#fff" font-size="9" text-anchor="middle" opacity="0.85">MESO</text>
+      <text class="tb" x="110" y="118">Systems &amp; contracts → stand up live fakes</text><text class="ts" x="110" y="138">architect · C4 containers · OpenAPI / AsyncAPI · synthetic data</text>
+      <!-- L3 -->
+      <rect x="30" y="164" width="690" height="62" rx="10" class="green"/>
+      <rect x="30" y="164" width="64" height="62" rx="10" fill="var(--green)"/><text x="62" y="194" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">L3</text><text x="62" y="211" fill="#fff" font-size="9" text-anchor="middle" opacity="0.85">MICRO</text>
+      <text class="tb" x="110" y="190">Behaviour as statecharts, wired to the fakes</text><text class="ts" x="110" y="210">engineer / UX · a policy becomes a guard · still on fakes</text>
+      <!-- L4 -->
+      <rect x="30" y="236" width="690" height="62" rx="10" class="violet"/>
+      <rect x="30" y="236" width="64" height="62" rx="10" fill="var(--violet)"/><text x="62" y="266" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">L4</text><text x="62" y="283" fill="#fff" font-size="9" text-anchor="middle" opacity="0.85">ATOMIC</text>
+      <text class="tb" x="110" y="262">Real code replaces the fakes — one node at a time</text><text class="ts" x="110" y="282">engineer / AI coding app · contract-tested · drift can't slip through</text>
+
+      <!-- through-line -->
+      <line class="arr dash" x1="752" y1="34" x2="752" y2="284" stroke="var(--contract)"/>
+      <g fill="var(--contract)"><circle cx="752" cy="51" r="3.4"/><circle cx="752" cy="123" r="3.4"/><circle cx="752" cy="195" r="3.4"/><circle cx="752" cy="267" r="3.4"/></g>
+      <text x="772" y="160" font-size="12" fill="var(--contract)" transform="rotate(90 772 160)" text-anchor="middle">ONE CONTRACT · the through-line</text>
+    </svg>
+    <figcaption>You can revisit a higher altitude any time — but never introduce detail below that breaks the picture above.</figcaption>
+  </figure>
+</section>
+
+<!-- CH4 -->
+<section class="chap" id="c4">
+  <div class="kick reveal"><i></i>chapter four · fakes-first</div>
+  <h2 class="reveal">You don't wait for the data.</h2>
+  <p class="cap reveal">This is the part most teams get wrong. A contract defines the <b>shape</b> of the data — and that shape alone is enough to generate plausible synthetic data and serve it from a <b>fake</b>. The moment a contract exists at the Meso level, the whole flow is <b>clickable on day one</b> — no real backend, no complete examples, no waiting.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 220" role="img" aria-label="A contract defines the shape; a fake obeys it and serves synthetic data; the UI flow is clickable immediately.">
+      <rect x="40" y="74" width="170" height="72" rx="11" class="amber"/>
+      <text class="tb" x="125" y="104" text-anchor="middle">Contract</text><text class="ts" x="125" y="124" text-anchor="middle">the agreed shape</text>
+      <text class="ts" x="125" y="166" text-anchor="middle">OpenAPI / AsyncAPI</text>
+
+      <rect x="325" y="74" width="170" height="72" rx="11" class="green"/>
+      <text class="tb" x="410" y="104" text-anchor="middle">Fake</text><text class="ts" x="410" y="124" text-anchor="middle">obeys the contract,</text>
+      <text class="ts" x="410" y="140" text-anchor="middle">serves synthetic data</text>
+
+      <rect x="610" y="74" width="170" height="72" rx="11" class="box"/>
+      <polygon points="675,98 675,122 697,110" fill="var(--blue)"/>
+      <rect x="705" y="98" width="52" height="6" rx="3" fill="var(--blue)" opacity="0.45"/><rect x="705" y="110" width="40" height="6" rx="3" fill="var(--blue)" opacity="0.45"/><rect x="705" y="122" width="46" height="6" rx="3" fill="var(--blue)" opacity="0.45"/>
+      <text class="ts" x="695" y="166" text-anchor="middle">a clickable flow</text>
+
+      <line class="arr" x1="210" y1="110" x2="323" y2="110" marker-end="url(#a4)"/><text class="lab" x="266" y="100" text-anchor="middle">defines</text>
+      <line class="arr" x1="495" y1="110" x2="608" y2="110" marker-end="url(#a4)"/><text class="lab" x="551" y="100" text-anchor="middle">feeds</text>
+      <defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>A simulation built from the model alone is enough to walk a client through their own process — and find what's missing.</figcaption>
+  </figure>
+</section>
+
+<!-- CH5 -->
+<section class="chap" id="c5">
+  <div class="kick reveal"><i></i>chapter five · the loop</div>
+  <h2 class="reveal">Every example makes it truer — and gets registered.</h2>
+  <p class="cap reveal">As real examples arrive — an Excel export, a blank form, a receipt — each one walks a node from coarse synthetic toward production-real, and the simulation converges on reality. Nothing is absorbed silently: every artifact is logged in an <b>evidence register</b>, so any part of the model traces back to the piece of client evidence that justified it.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 250" role="img" aria-label="A four-stage maturity ladder from schema-only to real code, above an evidence register row.">
+      <rect x="30" y="26" width="170" height="70" rx="10" class="blue"/><text class="ts t-blue" x="115" y="46" text-anchor="middle">STAGE 0</text><text class="tb" x="115" y="66" text-anchor="middle">Schema-only</text><text class="ts" x="115" y="84" text-anchor="middle">synthetic from types</text>
+      <rect x="218" y="26" width="170" height="70" rx="10" class="amber"/><text class="ts t-amber" x="303" y="46" text-anchor="middle">STAGE 1</text><text class="tb" x="303" y="66" text-anchor="middle">Example-seeded</text><text class="ts" x="303" y="84" text-anchor="middle">looks like their data</text>
+      <rect x="406" y="26" width="170" height="70" rx="10" class="green"/><text class="ts t-green" x="491" y="46" text-anchor="middle">STAGE 2</text><text class="tb" x="491" y="66" text-anchor="middle">Stateful sim</text><text class="ts" x="491" y="84" text-anchor="middle">enforces the rules</text>
+      <rect x="594" y="26" width="170" height="70" rx="10" class="violet"/><text class="ts t-violet" x="679" y="46" text-anchor="middle">STAGE 3</text><text class="tb" x="679" y="66" text-anchor="middle">Real code</text><text class="ts" x="679" y="84" text-anchor="middle">drops into place</text>
+      <line class="arr" x1="200" y1="61" x2="216" y2="61" marker-end="url(#a5)"/>
+      <line class="arr" x1="388" y1="61" x2="404" y2="61" marker-end="url(#a5)"/>
+      <line class="arr" x1="576" y1="61" x2="592" y2="61" marker-end="url(#a5)"/>
+
+      <text class="lab" x="30" y="140">↻ each real example walks a node toward the right →</text>
+      <!-- register -->
+      <rect x="30" y="158" width="734" height="66" rx="10" class="box"/>
+      <text class="ts" x="48" y="180" font-weight="700" fill="var(--faint)">EVIDENCE REGISTER</text>
+      <line x1="48" y1="190" x2="746" y2="190" stroke="var(--line)" stroke-width="1"/>
+      <text class="ts" x="48" y="210">EV-001 · "scratched-order receipt.xlsx" · from Dana's case file · 12 Mar · seeds the Refund fake · changed contract field <tspan font-style="italic">currency</tspan></text>
+      <defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>Early fakes are coarse; later fakes look like production; eventually real code quietly replaces them. The register makes the whole climb auditable.</figcaption>
+  </figure>
+</section>
+
+<!-- CH6 -->
+<section class="chap" id="c6">
+  <div class="kick reveal"><i></i>chapter six · rules made physical</div>
+  <h2 class="reveal">Illegal states simply can't be reached.</h2>
+  <p class="cap reveal">Business rules don't belong in scattered <code>if</code> statements a developer must remember. Modelled as <b>statechart guards</b>, a rule like <i>"no refund before inspection"</i> becomes something the system literally <b>cannot</b> violate. Compliance stops being a checklist and becomes the shape of the machine.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 240" role="img" aria-label="A state machine: Requested to Inspected to Refunded, with the direct Requested-to-Refunded jump blocked by a guard.">
+      <rect x="40" y="96" width="150" height="58" rx="12" class="box"/><text class="tb" x="115" y="122" text-anchor="middle">Requested</text><text class="ts" x="115" y="140" text-anchor="middle">return opened</text>
+      <rect x="335" y="96" width="150" height="58" rx="12" class="green"/><text class="tb t-green" x="410" y="122" text-anchor="middle">Inspected</text><text class="ts" x="410" y="140" text-anchor="middle">item checked</text>
+      <rect x="630" y="96" width="150" height="58" rx="12" class="amber"/><text class="tb t-amber" x="705" y="122" text-anchor="middle">Refunded</text><text class="ts" x="705" y="140" text-anchor="middle">money returned</text>
+
+      <line class="arr" x1="190" y1="125" x2="333" y2="125" marker-end="url(#a6)"/><text class="lab" x="261" y="115" text-anchor="middle">inspect</text>
+      <line class="arr" x1="485" y1="125" x2="628" y2="125" marker-end="url(#a6)"/><text class="lab t-green" x="556" y="115" text-anchor="middle">[ inspected ]</text>
+
+      <!-- blocked illegal transition -->
+      <path class="arr dash" d="M150 96 C330 36 540 36 700 92" stroke="var(--clay)" fill="none"/>
+      <text class="t-clay lab" x="425" y="46" text-anchor="middle">[ not inspected ] — guard blocks this</text>
+      <g stroke="var(--clay)" stroke-width="2.4"><line x1="413" y1="44" x2="437" y2="68"/><line x1="437" y1="44" x2="413" y2="68"/></g>
+      <defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+    <figcaption>The guard is the business rule; continuous contract testing re-checks it, so the running system can never silently diverge from the agreed design.</figcaption>
+  </figure>
+</section>
+
+<!-- CH7 -->
+<section class="chap" id="c7">
+  <div class="kick reveal"><i></i>chapter seven · the endpoint</div>
+  <h2 class="reveal">It ends in cubes, not a report.</h2>
+  <p class="cap reveal">The name is literal. A <b>cube</b> is one capability mapped all the way down — its story, its policies and slice of the lexicon, its contracts and fakes, its statecharts, and its registered evidence — one self-contained block. Because it speaks to its neighbours <b>only through its contracts</b>, it can be picked up and handed off on its own.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 280" role="img" aria-label="One cube as a stack of five layers — story, policies and lexicon, contracts and fakes, statecharts, evidence — with a single contract port on its edge.">
+      <rect x="220" y="20" width="380" height="246" rx="16" class="box"/>
+      <text class="ts" x="244" y="46" font-weight="700" fill="var(--faint)">ONE CUBE · THE REFUND CAPABILITY</text>
+      <rect x="244" y="58" width="332" height="36" rx="8" class="blue"/><text class="t" x="262" y="81">Story &amp; narratives — L1</text>
+      <rect x="244" y="100" width="332" height="36" rx="8" class="violet"/><text class="t" x="262" y="123">Policies · lexicon slice</text>
+      <rect x="244" y="142" width="332" height="36" rx="8" class="amber"/><text class="t" x="262" y="165">Contracts · fakes — L2</text>
+      <rect x="244" y="184" width="332" height="36" rx="8" class="green"/><text class="t" x="262" y="207">Statecharts — L3</text>
+      <rect x="244" y="226" width="332" height="32" rx="8" class="box dash"/><text class="ts" x="262" y="246">Registered evidence</text>
+      <!-- contract port -->
+      <line x1="576" y1="160" x2="628" y2="160" stroke="var(--amber)" stroke-width="1.6"/>
+      <circle cx="628" cy="160" r="6" class="amber"/>
+      <text class="ts t-amber" x="650" y="150">talks only</text><text class="ts t-amber" x="650" y="166">through its</text><text class="ts t-amber" x="650" y="182">contract</text>
+      <text class="ts t-amber" x="192" y="160" text-anchor="end">self-</text><text class="ts t-amber" x="192" y="176" text-anchor="end">contained</text>
+    </svg>
+    <figcaption>The business person never writes a technical spec — the mapping <i>is</i> the spec, with the acceptance criteria as its tests.</figcaption>
+  </figure>
+</section>
+
+<!-- CH8 -->
+<section class="chap" id="c8">
+  <div class="kick reveal"><i></i>chapter eight · redeployment</div>
+  <h2 class="reveal">Pick a cube up. Stand it back up — AI-native.</h2>
+  <p class="cap reveal">Hand a cube to an AI coding app with a one-sentence brief — <i>"implement this against these contracts and statecharts; the acceptance criteria are your tests; change neither"</i> — and it drops into the running system in place of its fake. Implement one cube, run another on its fakes a while longer, give a third to a different team. The organisation is redeployed, AI-native, one cube at a time.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 280" role="img" aria-label="A constellation of cubes linked by contracts: one is being implemented by an AI coding app, others remain live or on fakes.">
+      <g stroke="var(--contract)" stroke-width="1.4" stroke-dasharray="5 4" fill="none">
+        <line x1="190" y1="120" x2="400" y2="96"/>
+        <line x1="400" y1="96" x2="610" y2="150"/>
+        <line x1="190" y1="120" x2="330" y2="214"/>
+        <line x1="400" y1="96" x2="330" y2="214"/>
+      </g>
+      <text class="lab" x="300" y="86" text-anchor="middle">contract</text>
+
+      <g transform="translate(190,120)">
+        <polygon points="-30,-17 0,-32 30,-17 0,-2" class="amber"/><polygon points="-30,-17 -30,19 0,34 0,-2" class="blue"/><polygon points="30,-17 30,19 0,34 0,-2" class="green"/>
+      </g>
+      <rect x="160" y="66" width="60" height="22" rx="11" class="green"/><text class="ts t-green" x="190" y="81" text-anchor="middle" font-weight="700">live</text>
+
+      <circle cx="400" cy="96" r="46" fill="var(--violet-s)" opacity="0.5"/>
+      <g transform="translate(400,96)">
+        <polygon points="-30,-17 0,-32 30,-17 0,-2" fill="var(--violet-s)" stroke="var(--violet)" stroke-width="1.6"/><polygon points="-30,-17 -30,19 0,34 0,-2" fill="var(--blue-s)" stroke="var(--violet)" stroke-width="1.6"/><polygon points="30,-17 30,19 0,34 0,-2" fill="var(--green-s)" stroke="var(--violet)" stroke-width="1.6"/>
+        <text x="0" y="-22" text-anchor="middle" class="t-violet" font-size="13">✦</text>
+      </g>
+      <rect x="332" y="142" width="136" height="24" rx="12" class="violet"/><text class="ts t-violet" x="400" y="158" text-anchor="middle" font-weight="700">implemented by AI</text>
+
+      <g transform="translate(610,150)">
+        <polygon points="-30,-17 0,-32 30,-17 0,-2" class="amber"/><polygon points="-30,-17 -30,19 0,34 0,-2" class="blue"/><polygon points="30,-17 30,19 0,34 0,-2" class="green"/>
+      </g>
+      <rect x="576" y="190" width="70" height="22" rx="11" class="amber"/><text class="ts t-amber" x="611" y="205" text-anchor="middle" font-weight="700">on fakes</text>
+
+      <g transform="translate(330,214)" opacity="0.85">
+        <polygon points="-30,-17 0,-32 30,-17 0,-2" fill="var(--surface)" stroke="var(--faint)" stroke-width="1.2"/><polygon points="-30,-17 -30,19 0,34 0,-2" fill="var(--surface)" stroke="var(--faint)" stroke-width="1.2"/><polygon points="30,-17 30,19 0,34 0,-2" fill="var(--surface)" stroke="var(--faint)" stroke-width="1.2"/>
+      </g>
+      <text class="lab" x="330" y="264" text-anchor="middle">next</text>
+    </svg>
+    <figcaption>Each cube carries its own "why" with it, so it can be recombined, replaced, or run on its own — an organisation made of interchangeable, AI-native parts.</figcaption>
+  </figure>
+</section>
+
+<!-- CH9 -->
+<section class="chap" id="c9">
+  <div class="kick reveal"><i></i>chapter nine · who drives</div>
+  <h2 class="reveal">Two ways to use it.</h2>
+  <p class="cap reveal">It runs from either side of the table. A consultant can drive it as a playbook with the client — or you can hand the skill to a non-technical department manager and say <i>"talk to the AI until your processes are mapped."</i> In that mode the AI becomes the facilitator: it leads, they answer, it shows the picture back, and it keeps going until the map is complete.</p>
+  <figure class="reveal">
+    <svg viewBox="0 0 820 200" role="img" aria-label="Two modes side by side: a consultant facilitating with a shared canvas, and a client manager talking to the AI which leads the session.">
+      <rect x="24" y="24" width="370" height="152" rx="14" class="box"/>
+      <text class="ts t-amber" x="48" y="52" font-weight="700" letter-spacing="0.12em">FACILITATED</text>
+      <text class="tb" x="48" y="78" font-size="16">A consultant runs it</text>
+      <circle cx="62" cy="116" r="13" class="amber"/><circle cx="98" cy="116" r="13" class="blue"/>
+      <rect x="130" y="100" width="230" height="32" rx="8" class="box"/>
+      <rect x="142" y="108" width="40" height="16" rx="4" class="blue"/><rect x="190" y="108" width="40" height="16" rx="4" class="amber"/><rect x="238" y="108" width="40" height="16" rx="4" class="green"/>
+      <text class="ts" x="320" y="120" text-anchor="middle">shared canvas</text>
+      <text class="ts" x="48" y="160">references as a playbook, with the client in the room</text>
+
+      <rect x="426" y="24" width="370" height="152" rx="14" class="box"/>
+      <text class="ts t-violet" x="450" y="52" font-weight="700" letter-spacing="0.12em">SELF-SERVE</text>
+      <text class="tb" x="450" y="78" font-size="16">A client manager, solo</text>
+      <circle cx="466" cy="116" r="13" class="box"/><circle cx="466" cy="111" r="4.5" fill="var(--ink)"/><path d="M456 128 q10 -11 20 0" fill="var(--ink)"/>
+      <line class="arr" x1="486" y1="116" x2="516" y2="116" marker-end="url(#a9)"/>
+      <rect x="520" y="100" width="150" height="34" rx="9" class="violet"/><text class="ts t-violet" x="595" y="115" text-anchor="middle" font-weight="700">the AI</text><text class="ts" x="595" y="129" text-anchor="middle">leads the session</text>
+      <text class="ts" x="450" y="160">no jargon, no consultant — it does the translating</text>
+      <defs><marker id="a9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    </svg>
+  </figure>
+  <p class="cap reveal" style="margin-top:26px">The map, the requirements, the simulation, and the system are four views of one thing, kept in sync. Draw before you specify; simulate before you build; let the client make it truer by feeding you what they have. The goal is always a system everyone can <b>see, agree on, and trust</b> before it's expensive to be wrong.</p>
+  <p class="cap reveal" style="font-size:13px;color:var(--faint);margin-top:30px">cubemap · the Infinite Zoom &amp; Fakes-First method · companion to the <b>dsl</b> lexicon skill · Apache-2.0 · Vlad Bordei</p>
+</section>
+
+<script>
+(function(){
+  var bar=document.getElementById('bar');
+  var reveals=[].slice.call(document.querySelectorAll('.reveal'));
+  var sections=[].slice.call(document.querySelectorAll('.chap'));
+  var dots=[].slice.call(document.querySelectorAll('#rail a'));
+  function onScroll(){
+    var h=document.documentElement;
+    var p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+    bar.style.width=(p*100)+'%';
+  }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  var ro=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:0.12});
+  reveals.forEach(function(el){ro.observe(el);});
+  var so=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        var id=e.target.id;
+        dots.forEach(function(d){ d.classList.toggle('on', d.getAttribute('href')==='#'+id); });
+      }
+    });
+  },{threshold:0.5});
+  sections.forEach(function(s){so.observe(s);});
+})();
+</script>
+</body>
+</html>

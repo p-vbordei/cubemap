@@ -1,27 +1,21 @@
 ---
 name: cubemap
 description: >-
-  Map a client's projects, processes, and know-how — whatever input exists — into
-  functional requirements for an AI-driven organisation, then a simulated and
-  finally built system. Uses the "Infinite Zoom & Fakes-First" method: visually
-  map business processes on a canvas (Event Storming), then zoom from business
-  capabilities down through systems, contracts, behaviour (statecharts), and real
-  code, every technical choice tied to a business reason. A core move is
-  virtualizing processes early — a runnable simulation from the model alone, on
-  synthetic data, before all examples exist — then enriching it as real examples
-  (Excels, templates, receipts) arrive, each one registered as evidence. The
-  endpoint: each capability becomes a self-contained "cube" (story, requirements,
-  contracts, statecharts, fakes) precise enough to hand to an AI coding app for
-  implementation — redeploying the organisation, or parts of it, as cubes of an
-  AI-native organisation. Communicate visually (SVG, not Mermaid/text) and via
-  storytelling; deliverables are self-contained, mobile-friendly, e-mail-sharable
-  HTML, never Markdown. Use whenever someone wants to map a business process with
-  a client, design or architect a system, run Event Storming, turn a discovery
-  call into requirements, simulate/mock something before building, define
-  API/event contracts before code, keep documentation/specs/requirements/proof
-  updated as a build progresses, or document and close out a project after it is
-  finished (as-built record, including projects this method didn't build). Prefer
-  it over jumping straight to code or DB schemas.
+  Map a client's projects, processes, and know-how into functional
+  requirements for an AI-driven organisation, then simulate, build, and
+  document from one model. The "Infinite Zoom & Fakes-First" method: map
+  processes visually (Event Storming), then zoom from capabilities through
+  systems, contracts and statecharts to code, each choice tied to a business
+  reason. Virtualize early (a fake on synthetic data before examples exist),
+  enrich as real examples arrive (each registered as evidence), record
+  decisions and proof as you go, and package each capability as a
+  self-contained "cube" for an AI coding app. Show work as hand-composed SVG
+  (never Mermaid) and self-contained, e-mail-sharable HTML, never Markdown.
+  Use to map or architect a process or system, turn discovery into
+  requirements, simulate before building, define contracts, keep specs and
+  proof current as a build progresses, or close out a finished project (even
+  ones built without it). Not for one-off code edits, pure backend/infra
+  work, or quick answers.
 ---
 
 # cubemap — Infinite Zoom & Fakes-First
@@ -39,6 +33,67 @@ Maps for a software system: you can stand at country level and see whole busines
 capabilities, then zoom smoothly down to the street level of a single function —
 and at every altitude the map still makes sense and still connects to the one
 above it.
+
+## Start here — route to the right reference
+
+This SKILL.md is the map; the files in `references/` are the playbooks. **When
+the conversation enters one of the situations below, you MUST read its reference
+file before acting** — the body names *what* to do, the reference holds the
+*how*, and working from memory alone makes you skip steps. Load the one the
+moment calls for; don't preload them all.
+
+| When the situation is… | Read first |
+|---|---|
+| A non-technical client manager is driving solo, expecting to be guided (self-serve mode) | `references/guided-client-intake.md` |
+| Mapping the business with the people who own it (L1 Macro) | `references/macro-business-mapping.md` |
+| About to produce *any* diagram, explainer, or stakeholder deliverable | `references/visual-communication.md` |
+| Turning the map, narratives, and policies into the requirements deliverable | `references/functional-requirements.md` |
+| Defining contracts and standing up fakes (L2 Meso) | `references/contracts-and-fakes.md` |
+| Simulating before data exists, or ingesting an Excel / payload / document | `references/virtualization-and-enrichment.md` |
+| Recording decisions and proof as you work; keeping every view of the model in sync | `references/living-documentation.md` |
+| Modelling behaviour as statecharts (L3 Micro) | `references/statecharts-and-state-explosion.md` |
+| Writing real code, or keeping code and model in sync (L4 Atomic) | `references/round-trip-and-ddd-guardrails.md` |
+| Setting up continuous validation / catching contract drift | `references/contract-drift-and-testing.md` |
+| Choosing a tool for the level you're at | `references/tooling-matrix.md` |
+| Standing up the project repository | `references/project-scaffold.md` |
+| Capturing and reusing the client's own vocabulary | `references/domain-shared-lexicon.md` (+ companion `dsl` skill) |
+| Closing out a cube, phase, or engagement — or documenting a project built without this | `references/project-closeout.md` |
+| Wanting one process followed end-to-end as a worked example | `references/worked-example-ecommerce-return.md` |
+
+## Hard invariants (never violate)
+
+These are cubemap's identity — hold them even when someone pushes to skip ahead.
+The full rationale for each lives in **The core commitments** below; this block
+is the at-a-glance contract.
+
+1. **Business first.** Every system, contract, statechart, and line of code
+   traces to a business reason made explicit at a higher zoom level. If you
+   can't name the capability it serves, you zoomed too fast — go back up.
+2. **Visual, hand-composed SVG — never Mermaid or ASCII boxes.** Every
+   explanation is a deliberately composed picture wrapped in a story (actor →
+   event → consequence). Colour semantics are fixed: **blue = data, amber =
+   decide/act, green = ok, clay = danger, violet = AI/automation.**
+3. **Deliverables are self-contained HTML — never Markdown.** Anything a
+   stakeholder reads ships as one styled `.html` file with all CSS/JS/SVG
+   inline: responsive (verify at ~375px) and e-mail-sharable (no external
+   assets, no build, no server). Markdown is only for machine-loaded internals
+   (this skill's own files; `LEXICON.md`, whose format belongs to `dsl`).
+4. **Every client artifact is evidence — register it.** No template, export, or
+   receipt is absorbed silently; each is logged in `examples/register.html`
+   (what it is, who gave it and when, which step it feeds, what it changed). An
+   unregistered artifact is treated as if it doesn't exist.
+5. **Virtualize early; enrich progressively.** Stand up a fake the moment a
+   contract exists; make the simulation truer each time a real example arrives.
+   The model is never "done then built" — it converges on reality.
+6. **The cube is the unit of handoff.** Each capability mapped all the way down
+   — story, policies, its lexicon slice, contracts, fakes, statecharts, evidence
+   — is one self-contained block that speaks to its neighbours only through its
+   contracts, ready to hand to an AI coding app.
+7. **Documentation moves with the work.** Decisions and proof are recorded the
+   same session they happen — never reconstructed later — and a change to any
+   view of the model (requirement, contract, fake, statechart, lexicon) updates
+   them all before the session ends. A finished cube, phase, or engagement gets
+   a closeout, trued to as-built. The record is never left behind the model.
 
 ## What this is for
 

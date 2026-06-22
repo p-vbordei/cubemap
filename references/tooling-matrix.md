@@ -31,6 +31,10 @@ before the zoom level calls for it — the matrix is a menu, not a checklist.
 | | **PactFlow** BDCT + **Drift** | Bi-directional & spec-conformance | `can-i-deploy` release gating; provider OAS vs consumer Pact |
 | | **Specmatic** | Async/Kafka contract testing | AsyncAPI as contract; pulls Avro from Schema Registry |
 
+This row is a one-line index; the drift-detection suite, how the tools fit
+together, and the CI gating story are detailed in
+`references/contract-drift-and-testing.md`.
+
 ## Selection cheatsheet
 
 - **Need the shared, team-wide simulation environment?** → Microcks.
