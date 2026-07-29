@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>energy-cube — the story</title>
+<title>energy-cube, the story</title>
 <style>
   :root{
     --bg:#faf8f3; --surface:#ffffff; --ink:#2a2722; --muted:#6f6d64; --faint:#a6a399;
@@ -26,7 +26,7 @@
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
   /* progress + rail */
-  #bar{position:fixed;top:0;left:0;height:3px;background:var(--amber);width:0;z-index:50;transition:width .1s linear}
+  #bar{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--amber);transform:scaleX(0);transform-origin:0 50%;z-index:50;transition:transform .1s linear}
   #rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:11px}
   #rail a{width:9px;height:9px;border-radius:50%;background:var(--line);border:1px solid var(--faint);display:block;transition:all .2s}
   #rail a.on{background:var(--amber);border-color:var(--amber);transform:scale(1.35)}
@@ -64,7 +64,49 @@
   .arr{stroke:var(--faint);stroke-width:1.6;fill:none}
   .flow{stroke:var(--blue);stroke-width:2.6;fill:none}
   .dash{stroke-dasharray:5 4}
+</style><!--cubemap-gate-style-->
+<style>
+/* --- print / PDF: the paper version must match the screen version ---
+   Five things break a PDF that nobody notices on screen, and all five are
+   fixed here: scroll-reveal never fires so content prints blank; the dark
+   palette prints as unreadable ink; Chrome drops CSS backgrounds; vh heights
+   blow one chapter up to a whole page; fixed chrome repeats on every page. */
+@media print{
+  @page{ margin:14mm }
+
+  /* always print the light palette, whatever the OS theme is */
+  :root{
+    --bg:#fff; --surface:#fff; --card:#fff; --ink:#1e1c19; --muted:#57544d; --faint:#8a8780;
+    --line:#d8d3c7;
+    --amber:#a2661d; --amber-s:#f7edda; --blue:#2b6180; --blue-s:#e4eff4;
+    --green:#3d7247; --green-s:#e5f1e7; --clay:#993f2d; --clay-s:#f7e5df;
+    --violet:#584a79; --violet-s:#ede7f5;
+  }
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact }
+  html,body{ background:#fff; font-size:11.5pt }
+
+  /* screen-only chrome */
+  #bar,#rail,.scroll-hint,#cubemap-audit{ display:none !important }
+
+  /* the IntersectionObserver never runs while printing, un-hide everything */
+  .reveal{ opacity:1 !important; transform:none !important }
+
+  /* vh heights and the flex centring are for scrolling, not for paper */
+  .chap{ min-height:0; max-width:none; display:block; padding:0 0 20pt;
+         break-inside:avoid; page-break-inside:avoid }
+  .hero{ min-height:0 }
+  main{ max-width:none; padding:0 }
+
+  h1{ font-size:28pt } h2{ font-size:16pt } .lede{ font-size:12pt } .cap{ font-size:10pt }
+  h1,h2,.kick{ break-after:avoid; page-break-after:avoid }
+
+  figure,.entry,article,table,dl{ break-inside:avoid; page-break-inside:avoid }
+  figure{ margin:12pt 0 0 }
+  svg{ max-height:165mm }            /* a tall diagram must not be clipped by the page */
+  a{ color:inherit; text-decoration:none }
+}
 </style>
+<!--/cubemap-gate-style-->
 </head>
 <body>
 <div id="bar"></div>
@@ -84,8 +126,8 @@
 <!-- HERO -->
 <section class="chap hero" id="hero">
   <div class="kick reveal"><i></i>an AI-native energy system</div>
-  <h1 class="reveal">A battery that<br>runs itself —<br>safely.</h1>
-  <p class="lede reveal">energy-cube turns a grid-scale battery and a solar field into a self-operating, self-auditing machine: it forecasts, decides, acts on the market and the inverter, and records every move — with no dashboard to babysit.</p>
+  <h1 class="reveal">A battery that<br>runs itself.<br>Safely.</h1>
+  <p class="lede reveal">energy-cube turns a grid-scale battery and a solar field into a self-operating, self-auditing machine: it forecasts, decides, acts on the market and the inverter, and records every move, with no dashboard to babysit.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 200" role="img" aria-label="A sun, a battery, and the grid feeding into a faceted cube.">
       <!-- sun -->
@@ -126,7 +168,7 @@
 <section class="chap" id="c1">
   <div class="kick reveal"><i></i>chapter one · the opportunity &amp; the danger</div>
   <h2 class="reveal">Money lives in the spread. So does the risk.</h2>
-  <p class="cap reveal">Power is cheap when the sun floods the grid at midday and dear in the evening peak. A battery earns by buying low and selling high — but every cycle <b>wears the cells</b> and pushes against a <b>hard grid limit</b>. The entire business is that spread, captured <b>without ever crossing a line</b>.</p>
+  <p class="cap reveal">Power is cheap when the sun floods the grid at midday and dear in the evening peak. A battery earns by buying low and selling high, but every cycle <b>wears the cells</b> and pushes against a <b>hard grid limit</b>. The entire business is that spread, captured <b>without ever crossing a line</b>.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 360" role="img" aria-label="A daily price curve dipping at midday and peaking in the evening, with a charge action at the trough, a discharge at the peak, and a red grid limit that must not be crossed.">
       <!-- frame -->
@@ -136,7 +178,7 @@
       <text class="ts" x="74" y="318">00:00</text><text class="ts" x="400" y="318" text-anchor="middle">12:00</text><text class="ts" x="766" y="318" text-anchor="end">24:00</text>
       <!-- limit line -->
       <line class="lim dash" x1="70" y1="66" x2="770" y2="66" stroke="var(--clay)" stroke-width="1.6"/>
-      <text class="t-clay" x="766" y="58" text-anchor="end" font-size="12">grid / safety limit — never cross</text>
+      <text class="t-clay" x="766" y="58" text-anchor="end" font-size="12">grid / safety limit, never cross</text>
       <!-- price curve (duck) -->
       <path class="flow" d="M70 150 C140 120 180 235 270 244 S370 250 430 188 S560 96 620 104 S720 150 770 158"/>
       <text class="t-blue" x="150" y="135" font-size="12">price</text>
@@ -149,7 +191,7 @@
       <!-- discharge at peak -->
       <g>
         <line class="arr" x1="600" y1="118" x2="600" y2="150" stroke="var(--amber)" marker-end="url(#aa)"/>
-        <rect x="556" y="150" width="92" height="28" rx="6" class="amber"/>
+        <rect x="544" y="150" width="116" height="28" rx="6" class="amber"/>
         <text class="t-amber tb" x="602" y="168" text-anchor="middle" font-size="12">discharge / sell</text>
       </g>
       <defs>
@@ -157,7 +199,7 @@
         <marker id="aa" viewBox="0 0 10 10" refX="5" refY="2" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 8L5 2L9 8" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
       </defs>
     </svg>
-    <figcaption>Buy at the midday trough, sell into the evening peak — only when the spread beats the wear, and only inside the limit.</figcaption>
+    <figcaption>Buy at the midday trough, sell into the evening peak, only when the spread beats the wear, and only inside the limit.</figcaption>
   </figure>
 </section>
 
@@ -165,9 +207,9 @@
 <section class="chap" id="c2">
   <div class="kick reveal"><i></i>chapter two · the idea</div>
   <h2 class="reveal">One small loop. Nothing acts ungated.</h2>
-  <p class="cap reveal">The machine is a single governed loop: it <b>senses</b> the plant, <b>decides</b> a move, then the move must pass three gates — <b>is it sane, is it allowed, is it authorized</b> — before it <b>acts</b>. Every step is signed onto an audit trail you can replay. Deny by default; an action with no receipt never happened.</p>
+  <p class="cap reveal">The machine is a single governed loop: it <b>senses</b> the plant, <b>decides</b> a move, then the move must pass three gates, <b>is it sane, is it allowed, is it authorized</b>, before it <b>acts</b>. Every step is signed onto an audit trail you can replay. Deny by default; an action with no receipt never happened.</p>
   <figure class="reveal">
-    <svg viewBox="0 0 820 280" role="img" aria-label="A pipeline: sense, decide, three gates, act — every step writing down to a signed spine.">
+    <svg viewBox="0 0 820 280" role="img" aria-label="A pipeline: sense, decide, three gates, act: every step writing down to a signed spine.">
       <!-- nodes -->
       <g>
         <rect x="40" y="46" width="150" height="56" rx="10" class="blue"/><text class="tb" x="115" y="74" text-anchor="middle">sense</text><text class="ts" x="115" y="91" text-anchor="middle">read the plant</text>
@@ -194,7 +236,7 @@
       </g>
       <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
-    <figcaption>sense → decide → eval · policy · trust → act — and everything narrates to the spine.</figcaption>
+    <figcaption>sense → decide → eval · policy · trust → act, and everything narrates to the spine.</figcaption>
   </figure>
 </section>
 
@@ -202,7 +244,7 @@
 <section class="chap" id="c3">
   <div class="kick reveal"><i></i>chapter three · how it stays honest</div>
   <h2 class="reveal">Every edge has a stand-in.</h2>
-  <p class="cap reveal">Each thing that touches the real world — an inverter, a price feed, a forecast — is a <b>seam</b>: a tiny contract with a <b>deterministic stand-in (a Fake)</b> as its source of truth. The whole system runs and tests <b>offline, with no keys and no hardware</b>. The real vendor is just one plug behind the same shape — so <b>FusionSolar is one adapter, never the design</b>.</p>
+  <p class="cap reveal">Each thing that touches the real world (an inverter, a price feed, a forecast) is a <b>seam</b>: a tiny contract with a <b>deterministic stand-in (a Fake)</b> as its source of truth. The whole system runs and tests <b>offline, with no keys and no hardware</b>. The real vendor is just one plug behind the same shape, so <b>FusionSolar is one adapter, never the design</b>.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 280" role="img" aria-label="A caller talks to an interface seam; behind it sit two interchangeable implementations: a deterministic Fake for CI and a real adapter for production.">
       <rect x="40" y="112" width="150" height="56" rx="10" class="box"/><text class="tb" x="115" y="140" text-anchor="middle">the cube</text><text class="ts" x="115" y="157" text-anchor="middle">caller</text>
@@ -212,7 +254,7 @@
       <!-- two impls -->
       <line class="arr" x1="450" y1="124" x2="556" y2="78" marker-end="url(#a3)"/>
       <line class="arr" x1="450" y1="156" x2="556" y2="202" marker-end="url(#a3)"/>
-      <rect x="560" y="50" width="220" height="56" rx="10" class="green"/><text class="tb t-green" x="670" y="74" text-anchor="middle">Fake — source of truth</text><text class="ts" x="670" y="92" text-anchor="middle">deterministic · offline · in CI</text>
+      <rect x="560" y="50" width="220" height="56" rx="10" class="green"/><text class="tb t-green" x="670" y="74" text-anchor="middle">Fake, source of truth</text><text class="ts" x="670" y="92" text-anchor="middle">deterministic · offline · in CI</text>
       <rect x="560" y="174" width="220" height="56" rx="10" class="amber"/><text class="tb t-amber" x="670" y="198" text-anchor="middle">real adapter</text><text class="ts" x="670" y="216" text-anchor="middle">network / hardware · in prod</text>
       <text class="ts" x="505" y="116" text-anchor="middle">CI</text><text class="ts" x="505" y="182" text-anchor="middle">live</text>
       <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
@@ -225,7 +267,7 @@
 <section class="chap" id="c4">
   <div class="kick reveal"><i></i>chapter four · the rules, made physical</div>
   <h2 class="reveal">Illegal states simply can't be reached.</h2>
-  <p class="cap reveal">The battery's life is a tiny state machine, and the business rules are its <b>guards</b>. It <b>cannot</b> enter <i>Discharging</i> if the charge is below the floor, or if the spread doesn't beat the wear. Trip a safety limit or pull the kill-switch and it <b>falls closed to Idle</b>. Compliance isn't a checklist — it's the shape of the machine.</p>
+  <p class="cap reveal">The battery's life is a tiny state machine, and the business rules are its <b>guards</b>. It <b>cannot</b> enter <i>Discharging</i> if the charge is below the floor, or if the spread doesn't beat the wear. Trip a safety limit or pull the kill-switch and it <b>falls closed to Idle</b>. Compliance isn't a checklist. It's the shape of the machine.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 300" role="img" aria-label="A state machine: Idle in the centre, Charging above-right and Discharging below-right, with guard conditions on each transition and a fail-closed return to Idle.">
       <!-- states -->
@@ -251,7 +293,7 @@
         <marker id="a4c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
       </defs>
     </svg>
-    <figcaption>The guards are the business rules; the eval gate re-checks them before any dispatch — defence in depth.</figcaption>
+    <figcaption>The guards are the business rules; the eval gate re-checks them before any dispatch, defence in depth.</figcaption>
   </figure>
 </section>
 
@@ -259,7 +301,7 @@
 <section class="chap" id="c5">
   <div class="kick reveal"><i></i>chapter five · the twist</div>
   <h2 class="reveal">It was never one cube.</h2>
-  <p class="cap reveal">To decide well, the battery needs to see the future: tomorrow's <b>prices</b>, its <b>solar</b>, the <b>load</b>. Each of those is its own engine — and <b>we build them</b>. So the system is a <b>constellation</b>: forecasting cubes that are products in their own right, feeding one dispatch cube that acts on the asset and the market. All on the same spine.</p>
+  <p class="cap reveal">To decide well, the battery needs to see the future: tomorrow's <b>prices</b>, its <b>solar</b>, the <b>load</b>. Each of those is its own engine, and <b>we build them</b>. So the system is a <b>constellation</b>: forecasting cubes that are products in their own right, feeding one dispatch cube that acts on the asset and the market. All on the same spine.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 470" role="img" aria-label="Five forecast and market cubes feed a dispatch cube, which acts via inverter control and market access; all share a spine that reports read.">
       <!-- inputs -->
@@ -290,7 +332,7 @@
       <rect x="24" y="352" width="686" height="46" rx="9" class="box"/><text class="tb" x="367" y="372" text-anchor="middle">cube-spine</text><text class="ts" x="367" y="389" text-anchor="middle">signed · correlated · replayable</text>
       <!-- reports -->
       <line class="arr" x1="540" y1="398" x2="540" y2="412" marker-end="url(#a5)"/>
-      <rect x="430" y="414" width="280" height="40" rx="9" class="box"/><text class="t" x="570" y="439" text-anchor="middle">Reports &amp; analytics — read the spine</text>
+      <rect x="430" y="414" width="280" height="40" rx="9" class="box"/><text class="t" x="570" y="439" text-anchor="middle">Reports &amp; analytics, read the spine</text>
       <defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
     <figcaption>Eight cubes, one spine. Any forecast cube is also callable on its own.</figcaption>
@@ -301,7 +343,7 @@
 <section class="chap" id="c6">
   <div class="kick reveal"><i></i>chapter six · how it holds together</div>
   <h2 class="reveal">A thin brain over deep engines.</h2>
-  <p class="cap reveal">The engines are real services — Rust, Python, TypeScript — with their own databases and queues. They sit in a <b>capability plane</b>. Above them, a <b>thin control plane</b> (the cubes, the gates, the spine) does the governing. The seam is the border between them: a <b>Fake</b> on the inside for testing, a <b>real adapter</b> reaching the engine in production.</p>
+  <p class="cap reveal">The engines are real services (Rust, Python, TypeScript) with their own databases and queues. They sit in a <b>capability plane</b>. Above them, a <b>thin control plane</b> (the cubes, the gates, the spine) does the governing. The seam is the border between them: a <b>Fake</b> on the inside for testing, a <b>real adapter</b> reaching the engine in production.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 300" role="img" aria-label="A control plane band of cubes and gates sits above a capability plane band of engines and datastores, joined across a seam boundary.">
       <!-- control plane -->
@@ -315,7 +357,7 @@
       </g>
       <!-- seam divider -->
       <line class="dash" x1="30" y1="150" x2="790" y2="150" stroke="var(--faint)" stroke-width="1.4"/>
-      <text class="ts" x="410" y="143" text-anchor="middle">the seam — Fake (CI) ↔ real adapter (prod) · minted token over the private network</text>
+      <text class="ts" x="410" y="143" text-anchor="middle">the seam, Fake (CI) ↔ real adapter (prod) · minted token over the private network</text>
       <g class="arr"><line x1="410" y1="116" x2="410" y2="184" marker-end="url(#a6)"/></g>
       <!-- capability plane -->
       <rect x="30" y="186" width="760" height="92" rx="12" class="box"/>
@@ -329,7 +371,7 @@
       </g>
       <defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
-    <figcaption>We write the thin plane. The deep engines already exist — we wrap, not rewrite.</figcaption>
+    <figcaption>We write the thin plane. The deep engines already exist. We wrap, not rewrite.</figcaption>
   </figure>
 </section>
 
@@ -337,7 +379,7 @@
 <section class="chap" id="c7">
   <div class="kick reveal"><i></i>chapter seven · a day in the life</div>
   <h2 class="reveal">Plan once. Steer ninety-six times.</h2>
-  <p class="cap reveal">Just after prices publish, the forecasts converge into one optimal plan for tomorrow. Then, <b>every fifteen minutes</b>, the cube reads the battery, computes the nudge that hits the planned charge, clears the gates, and acts — settling each interval onto the record.</p>
+  <p class="cap reveal">Just after prices publish, the forecasts converge into one optimal plan for tomorrow. Then, <b>every fifteen minutes</b>, the cube reads the battery, computes the nudge that hits the planned charge, clears the gates, and acts, settling each interval onto the record.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 300" role="img" aria-label="A 24-hour timeline: at about 13:00 four forecasts converge into a committed plan; after that a 15-minute control loop repeats across the day.">
       <!-- forecasts converging -->
@@ -370,7 +412,7 @@
       <text class="lab" x="250" y="278" text-anchor="middle">15-min control loop · 96× per day</text>
       <defs><marker id="a7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
-    <figcaption>One signed transcript replays the whole trading day — the evidence for settlement and review.</figcaption>
+    <figcaption>One signed transcript replays the whole trading day: the evidence for settlement and review.</figcaption>
   </figure>
 </section>
 
@@ -378,10 +420,10 @@
 <section class="chap" id="c8">
   <div class="kick reveal"><i></i>chapter eight · shipping it</div>
   <h2 class="reveal">One project. One public door.</h2>
-  <p class="cap reveal">On Railway, only the <b>conductor</b> faces the world — the MCP control surface and the reports. Every engine and datastore lives on the <b>private network</b> behind it, reached with a short-lived minted token. The whole thing builds into a single bundle and tests green before a single real service is wired.</p>
+  <p class="cap reveal">On Railway, only the <b>conductor</b> faces the world: the MCP control surface and the reports. Every engine and datastore lives on the <b>private network</b> behind it, reached with a short-lived minted token. The whole thing builds into a single bundle and tests green before a single real service is wired.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 310" role="img" aria-label="A public conductor service sits above a private network containing the engine services and managed datastores.">
-      <rect x="300" y="22" width="220" height="56" rx="11" class="amber"/><text class="tb t-amber" x="410" y="46" text-anchor="middle">conductor — public</text><text class="ts" x="410" y="64" text-anchor="middle">cubes · gates · spine · MCP · /health</text>
+      <rect x="300" y="22" width="220" height="56" rx="11" class="amber"/><text class="tb t-amber" x="410" y="46" text-anchor="middle">conductor, public</text><text class="ts" x="410" y="64" text-anchor="middle">cubes · gates · spine · MCP · /health</text>
       <line class="arr" x1="410" y1="78" x2="410" y2="108" marker-end="url(#a8)"/>
       <text class="ts" x="500" y="98" text-anchor="middle">minted token</text>
       <!-- private network -->
@@ -413,7 +455,7 @@
 <section class="chap" id="c9">
   <div class="kick reveal"><i></i>chapter nine · the path forward</div>
   <h2 class="reveal">Stand-ins first. One green step at a time.</h2>
-  <p class="cap reveal">We write the contracts, then their Fakes, then the cube around them — proving a full day offline before a single real service is touched. Each step is green on its own. We're <b>done</b> when every capability has a stand-in and a real plug, all wired in the conductor, deployable.</p>
+  <p class="cap reveal">We write the contracts, then their Fakes, then the cube around them, proving a full day offline before a single real service is touched. Each step is green on its own. We're <b>done</b> when every capability has a stand-in and a real plug, all wired in the conductor, deployable.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 210" role="img" aria-label="A rising path of seven build steps from contracts to deploy.">
       <polyline class="flow" points="70,150 188,140 306,126 424,112 542,98 660,84 760,70" stroke="var(--green)"/>
@@ -429,7 +471,7 @@
     </svg>
     <figcaption>contracts → fakes → faces → wiring → real adapters → deploy. The Fake is always written first; the real adapter must match it.</figcaption>
   </figure>
-  <p class="cap reveal" style="margin-top:28px"><b>Where we are:</b> the design is complete, end to end. No code yet. The build begins at <b>P0</b> — and from there, every functionality becomes a cube, until the battery runs itself.</p>
+  <p class="cap reveal" style="margin-top:28px"><b>Where we are:</b> the design is complete, end to end. No code yet. The build begins at <b>P0</b>, and from there, every functionality becomes a cube, until the battery runs itself.</p>
   <p class="cap reveal" style="font-size:13px;color:var(--faint);margin-top:30px">energy-cube · part of the cube platform · Apache-2.0 · Vlad Bordei · design phase</p>
 </section>
 
@@ -442,7 +484,7 @@
   function onScroll(){
     var h=document.documentElement;
     var p=h.scrollTop/(h.scrollHeight-h.clientHeight);
-    bar.style.width=(p*100)+'%';
+    bar.style.transform='scaleX('+p+')';
   }
   window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
   var ro=new IntersectionObserver(function(es){
@@ -459,6 +501,188 @@
   },{threshold:0.5});
   sections.forEach(function(s){so.observe(s);});
 })();
+</script><!--cubemap-gate-audit-->
+<script>
+/* --- cubemap deliverable audit, zero dependencies, native APIs only ---
+   Silent unless you ask for it: add #audit to the URL, or call
+   window.cubemapAudit() from a console or a headless driver. */
+(function(){
+  var SVGNS='http://www.w3.org/2000/svg';
+  var MARKETING=/\b(leverage|utili[sz]e|facilitate|seamless(ly)?|robust|cutting.edge|best.in.class|game.chang\w+|unlock\w*|empower\w*|delve|in today's [\w\s]*world|it is important to note)\b/gi;
+
+  function externals(){
+    var bad=[], inert=/^\s*(data:|#|$)/i;
+    [].forEach.call(document.querySelectorAll('*'),function(el){
+      var tag=el.tagName.toLowerCase();
+      ['src','data','href','xlink:href','poster'].forEach(function(a){
+        if(tag==='a'&&a==='href') return;               // links out are fine; loads are not
+        var u=el.getAttribute(a);
+        if(u&&!inert.test(u)) bad.push(tag+'['+a+'] → '+u.trim().slice(0,64));
+      });
+    });
+    [].forEach.call(document.querySelectorAll('style'),function(s){
+      var m=s.textContent.match(/@import[^;]*|url\(\s*(?!["']?(data:|#))[^)]*\)/gi);
+      if(m) m.forEach(function(x){ bad.push('css → '+x.trim().slice(0,64)); });
+    });
+    return bad;
+  }
+
+  /* bbox of an element expressed in its own <svg>'s viewBox coordinates */
+  function userBox(el,svg){
+    var b,m; try{ b=el.getBBox(); }catch(e){ return null; }
+    var root=svg.getScreenCTM(), own=el.getScreenCTM();
+    if(!root||!own) return null;                        // in <defs>, or not rendered
+    m=root.inverse().multiply(own);
+    var xs=[],ys=[];
+    [[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]].forEach(function(p){
+      var q=svg.createSVGPoint(); q.x=p[0]; q.y=p[1]; q=q.matrixTransform(m); xs.push(q.x); ys.push(q.y);
+    });
+    return {x:Math.min.apply(0,xs),y:Math.min.apply(0,ys),
+            X:Math.max.apply(0,xs),Y:Math.max.apply(0,ys)};
+  }
+
+  function svgBounds(){
+    var bad=[], T=0.75;                                 // sub-pixel slack
+    [].forEach.call(document.querySelectorAll('svg[viewBox]'),function(svg,i){
+      if(svg.closest('defs,marker,symbol')) return;
+      var v=svg.viewBox.baseVal, tag='svg#'+(i+1)+' ('+v.width+'×'+v.height+')';
+      var rects=[];
+      [].forEach.call(svg.querySelectorAll('rect,circle,ellipse,polygon'),function(el){
+        if(el.closest('defs,marker,symbol')) return;
+        var b=userBox(el,svg); if(b) rects.push(b);
+      });
+      [].forEach.call(svg.querySelectorAll('text'),function(el){
+        if(el.closest('defs,marker,symbol')) return;
+        var b=userBox(el,svg); if(!b) return;
+        var s='"'+(el.textContent||'').trim().slice(0,42)+'"';
+        // a) outside the viewBox, the label is simply cropped away
+        if(b.x<v.x-T||b.y<v.y-T||b.X>v.x+v.width+T||b.Y>v.y+v.height+T)
+          bad.push(tag+' · outside viewBox · '+s);
+        // b) inside a shape that does not contain it, the classic overflow
+        var host=null;
+        rects.forEach(function(r){
+          var cx=(b.x+b.X)/2, cy=(b.y+b.Y)/2;
+          if(cx<r.x||cx>r.X||cy<r.y||cy>r.Y) return;    // centre not in this shape
+          if(!host||(r.X-r.x)*(r.Y-r.y)<(host.X-host.x)*(host.Y-host.y)) host=r;
+        });
+        if(host&&(b.x<host.x-T||b.X>host.X+T||b.y<host.y-T||b.Y>host.Y+T))
+          bad.push(tag+' · overflows its shape by '+
+            Math.ceil(Math.max(host.x-b.x,b.X-host.X,host.y-b.y,b.Y-host.Y))+'px · '+s);
+      });
+    });
+    return bad;
+  }
+
+  /* Em-dashes are forbidden outright. They are the single loudest signal that a
+     machine wrote the text, and a deliverable that reads as machine-written
+     costs the trust the whole engagement runs on. Use a comma, a colon, a
+     period, or parentheses. This check never warns: it fails. */
+  function emDashes(){
+    var bad=[], parts=[];
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT), n;
+    while((n=w.nextNode())){
+      var p=n.parentNode&&n.parentNode.nodeName;
+      if(p!=='SCRIPT'&&p!=='STYLE') parts.push(n.nodeValue);
+    }
+    [].forEach.call(document.querySelectorAll('[aria-label],[alt],[title]'),function(el){
+      parts.push(el.getAttribute('aria-label')||'', el.getAttribute('alt')||'', el.getAttribute('title')||'');
+    });
+    /* U+2014 is escaped below so that this detector is itself clean */
+    var re=/[^\n]{0,34}(—|\s--\s)[^\n]{0,34}/g, m, t=parts.join('\n');
+    while((m=re.exec(t))&&bad.length<12) bad.push('"'+m[0].replace(/\s+/g,' ').trim()+'"');
+    return bad;
+  }
+
+  function prose(){
+    var warn=[], strict=[];
+    [].forEach.call(document.querySelectorAll('p,li,dd,figcaption,h1,h2,h3,.lede,.cap'),function(el){
+      if(el.querySelector('p,li,dd')) return;                       // leaves only
+      var t=(el.textContent||'').replace(/\s+/g,' ').trim();
+      if(!t) return;
+      var isStrict=!!el.closest('[data-ste="strict"]');
+      var limit=isStrict?20:28, sink=isStrict?strict:warn;
+      t.split(/[.!?]+[\s"'”’)]+/).forEach(function(s){   // no lookbehind: older Safari
+        var n=s.split(/\s+/).filter(Boolean).length;
+        if(n>limit) sink.push(n+' words (max '+limit+') · "'+s.slice(0,54)+'…"');
+      });
+      if(isStrict){
+        if(/;/.test(t)) strict.push('semicolon, use a period · "'+t.slice(0,54)+'…"');
+        var c=t.match(/\b[A-Za-z]+['’](s|t|re|ve|ll|d|m)\b/g);
+        if(c) strict.push('contraction '+c.slice(0,3).join(', ')+', write it out');
+      }
+      var m=t.match(MARKETING);
+      if(m) sink.push('marketing word: '+m.slice(0,4).join(', '));
+    });
+    return {strict:strict,warn:warn};
+  }
+
+  /* what is too wide, named, so you know what to fix, not just that it happened */
+  function tooWide(){
+    var bad=[], d=document.documentElement;
+    if(d.scrollWidth>d.clientWidth+1)
+      bad.push('the page: '+d.scrollWidth+'px of content in a '+d.clientWidth+'px viewport');
+    [].forEach.call(document.querySelectorAll('body *'),function(el){
+      if(el.closest('svg')||el.id==='cubemap-audit') return;   // svg scales by viewBox
+      if(getComputedStyle(el).overflowX!=='visible') return;   // a deliberate scroller
+      if(el.clientWidth>0&&el.scrollWidth>el.clientWidth+1)
+        bad.push('<'+el.tagName.toLowerCase()+(el.id?'#'+el.id:'')+
+          (el.classList.length?'.'+[].join.call(el.classList,'.'):'')+'> '+
+          el.scrollWidth+'px of content in '+el.clientWidth+'px');
+    });
+    return bad.slice(0,10);
+  }
+
+  function run(opts){
+    var d=document.documentElement, p=prose();
+    var r={
+      'self-contained':externals(),
+      'svg bounds':svgBounds(),
+      'no em-dashes':emDashes(),
+      'nothing too wide':tooWide(),
+      'print stylesheet':/@media\s+print/.test(
+        [].map.call(document.querySelectorAll('style'),function(s){return s.textContent}).join(''))
+        ? [] : ['no @media print block, the PDF will not match the screen'],
+      'plain language (strict)':p.strict,
+      'plain language (prose)':p.warn
+    };
+    var hard=['self-contained','svg bounds','no em-dashes','nothing too wide',
+              'print stylesheet','plain language (strict)'];
+    r.PASS=hard.every(function(k){return !r[k].length});
+    r.viewport=d.clientWidth+'px';
+    if(opts!==false) render(r,hard);
+    console.log('CUBEMAP-AUDIT '+JSON.stringify(r));
+    return r;
+  }
+
+  function render(r,hard){
+    var old=document.getElementById('cubemap-audit'); if(old) old.remove();
+    var el=document.createElement('div'); el.id='cubemap-audit';
+    el.style.cssText='position:fixed;left:12px;bottom:12px;max-width:min(560px,92vw);max-height:70vh;'+
+      'overflow:auto;z-index:9999;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;'+
+      'background:#14130f;color:#efeade;border:2px solid '+(r.PASS?'#4d8759':'#b14d3b')+';'+
+      'border-radius:10px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.35)';
+    var h='<b style="font-size:13px">'+(r.PASS?'✓ deliverable gate: PASS':'✗ deliverable gate: FAIL')+
+      '</b> <span style="opacity:.55">viewport '+r.viewport+', check at 375px too</span><br>';
+    Object.keys(r).forEach(function(k){
+      if(k==='PASS'||k==='viewport') return;
+      var v=r[k], ok=!v.length, soft=hard.indexOf(k)<0;
+      h+='<div style="margin-top:7px"><span style="color:'+(ok?'#8cc79a':(soft?'#dba055':'#d77f6b'))+'">'+
+        (ok?'✓':(soft?'!':'✗'))+'</span> '+k+(ok?'':' ('+v.length+')');
+      v.slice(0,12).forEach(function(x){ h+='<div style="opacity:.75;margin-left:14px">'+
+        String(x).replace(/[<&]/g,function(c){return c==='<'?'&lt;':'&amp;'})+'</div>'; });
+      if(v.length>12) h+='<div style="opacity:.5;margin-left:14px">…and '+(v.length-12)+' more</div>';
+      h+='</div>';
+    });
+    h+='<div style="margin-top:9px;opacity:.5">click to dismiss</div>';
+    el.innerHTML=h; el.onclick=function(){el.remove()};
+    document.body.appendChild(el);
+  }
+
+  window.cubemapAudit=run;
+  if(location.hash==='#audit') (document.readyState==='complete')
+    ? run() : window.addEventListener('load',function(){run()});
+})();
 </script>
+<!--/cubemap-gate-audit-->
 </body>
 </html>

@@ -1,13 +1,14 @@
 # Macro (L1): Mapping a Business Process With the Client
 
-This is the heart of the method and the part most teams skip. Before any system,
-contract, or line of code exists, you sit with the people who actually run the
-business and draw how it works — on a shared canvas, out loud, together. Everything
-downstream is only as good as this picture.
+This is the heart of the method and the part most teams skip. Before any
+system, contract, or line of code exists, you sit with the people who actually
+run the business and draw how it works, on a shared canvas, out loud,
+together. Everything downstream is only as good as this picture.
 
-The goal of a Macro session is a map the client looks at and says: *"yes, that's
-how it actually works."* Not how it should work in theory, not how the brochure
-says it works — how it really happens, including the messy manual parts.
+The goal of a Macro session is a map the client looks at and says: *"yes,
+that's how it actually works."* Not how it should work in theory, not how the
+brochure says it works, how it really happens, including the messy manual
+parts.
 
 ## Start from the narrative, not from boxes
 
@@ -16,7 +17,7 @@ as a story about who does what. Your job is to capture that story faithfully and
 then formalize it. So begin by getting them to narrate the *as-is* process in
 plain language:
 
-> "An employee receives a file that looks like **K** — it's a receipt. She reads
+> "An employee receives a file that looks like **K**. It's a receipt. She reads
 > it, keys the figures into **software X**, which produces **report Y**. She prints
 > Y and emails it to **Z** for approval."
 
@@ -42,35 +43,36 @@ loops back.
 ## The Event Storming pass
 
 Once the narrative is on the canvas, formalize it with a lightweight Event
-Storming vocabulary. You don't need the full workshop ceremony — you need the
+Storming vocabulary. You don't need the full workshop ceremony. You need the
 primitives, color-coded so the client can read the flow:
 
 - **Domain events** (past tense): the things that happen and matter to the
-  business — *Receipt Received*, *Figures Entered*, *Report Generated*,
-  *Report Approved*. These are the backbone; lay them left-to-right in time order.
-- **Commands**: the actions that cause events — *Enter Figures*, *Generate Report*.
-- **Actors**: who issues the command — the employee, the approver Z.
+  business, *Receipt Received*, *Figures Entered*, *Report Generated*, *Report
+  Approved*. These are the backbone; lay them left-to-right in time order.
+- **Commands**: the actions that cause events, *Enter Figures*, *Generate
+  Report*.
+- **Actors**: who issues the command: the employee, the approver Z.
 - **Policies** (the rules): "*whenever* a report is over €10,000, it must be
-  approved by a manager, not Z." Policies are reactive rules — "whenever X then Y."
-  They are gold; they become guards in your state machines later.
-- **Read models / artifacts**: the things actors look at to decide — the receipt,
-  the report, a dashboard.
-- **External systems**: anything outside the boundary — the email server, a bank
-  portal, software X if it's third-party.
+  approved by a manager, not Z." Policies are reactive rules, "whenever X then
+  Y." They are gold; they become guards in your state machines later.
+- **Read models / artifacts**: the things actors look at to decide: the
+  receipt, the report, a dashboard.
+- **External systems**: anything outside the boundary: the email server, a
+  bank portal, software X if it's third-party.
 - **Hotspots**: mark disagreements, unknowns, and pain points in a loud color.
   "Nobody's sure what happens if the receipt is unreadable" is a hotspot, and
   hotspots are where the real value of the session lives.
 
 ## From process to business capabilities
 
-A long event chain is the *flow*. Now group it into **capabilities** — the
-durable, named chunks of "what this business is able to do." Receipt Received →
-Figures Entered might belong to a *Document Intake* capability; Report Generated →
-Report Approved to a *Reporting & Approval* capability. Capabilities become the
-top-level opaque blocks on the canvas — the country-level view. At Macro you show
-only capabilities and the events flowing between them. No tech. No databases. No
-APIs. If someone says "we'll use Postgres for that," note it and zoom back up —
-it's not time yet.
+A long event chain is the *flow*. Now group it into **capabilities**: the
+durable, named chunks of "what this business is able to do." Receipt Received
+→ Figures Entered might belong to a *Document Intake* capability; Report
+Generated → Report Approved to a *Reporting & Approval* capability.
+Capabilities become the top-level opaque blocks on the canvas: the country-
+level view. At Macro you show only capabilities and the events flowing between
+them. No tech. No databases. No APIs. If someone says "we'll use Postgres for
+that," note it and zoom back up. It's not time yet.
 
 ## The value stream
 
@@ -81,17 +83,17 @@ which capabilities are core (differentiating, worth automating well) versus
 supporting (necessary but commodity). This is the conversation that keeps
 engineering effort pointed at what the business actually cares about.
 
-## Capture as you go — write it down, tell it back
+## Capture as you go: write it down, tell it back
 
-Macro is not a silent drawing exercise. As the map takes shape, narrate it back to
-the client: *"so a receipt comes in, Maria keys it into X, X spits out a report,
-she prints it and emails Z — and if it's over ten grand it goes to a manager
-instead. Did I get that right?"* The act of telling it back surfaces corrections
-instantly. Write the agreed narrative down alongside the canvas — a short prose
-description per capability. This written process is a living artifact: you will
-keep refining it as examples arrive (see
-`references/virtualization-and-enrichment.md`), tightening the wording until it's
-precise enough to build from.
+Macro is not a silent drawing exercise. As the map takes shape, narrate it
+back to the client: *"so a receipt comes in, Maria keys it into X, X spits out
+a report, she prints it and emails Z, and if it's over ten grand it goes to a
+manager instead. Did I get that right?"* The act of telling it back surfaces
+corrections instantly. Write the agreed narrative down alongside the canvas: a
+short prose description per capability. This written process is a living
+artifact: you will keep refining it as examples arrive (see
+`references/virtualization-and-enrichment.md`), tightening the wording until
+it's precise enough to build from.
 
 ## What you leave the session with
 
@@ -102,15 +104,15 @@ precise enough to build from.
 - A marked set of hotspots: unknowns, disputes, and pain points to resolve.
 - A first read on the value stream and which capabilities are core.
 
-That's enough to descend to Meso for the capability in focus — define its systems
-and contracts, and stand up a simulation — *without* needing every example or
-detail nailed down yet. The gaps become things you fill by enrichment, not
-blockers that stall the whole engagement.
+That's enough to descend to Meso for the capability in focus (define its
+systems and contracts, and stand up a simulation) *without* needing every
+example or detail nailed down yet. The gaps become things you fill by
+enrichment, not blockers that stall the whole engagement.
 
 ## Questions that open a Macro session
 
-- "Walk me through what happens, start to finish, the way it really goes today —
-  who touches it, and in what order?"
+- "Walk me through what happens, start to finish, the way it really goes
+  today, who touches it, and in what order?"
 - "What does the thing they're working on look like when it arrives? Can you show
   me one?" (This is also your first enrichment example.)
 - "What has to be true before this step can happen? What's not allowed?"

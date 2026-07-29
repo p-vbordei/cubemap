@@ -3,7 +3,7 @@
 Fakes-First only works if the real code, once written, actually honours the
 contracts the fakes were built from. The risk is **drift**: the YAML spec and the
 running production code slowly diverge until the agreed design is fiction. A spec
-file can't fix a backend bug on its own — so contracts have to become *executable*
+file can't fix a backend bug on its own, so contracts have to become *executable*
 checks that run continuously in CI and block incompatible changes from shipping.
 
 "Schema valid" is a weaker guarantee than "integration compatible." Strict JSON
@@ -15,12 +15,12 @@ purpose-built tools rather than relying on one.
 
 | Tool | Testing style | Protocols | Where it runs | What it's best at |
 |------|---------------|-----------|---------------|-------------------|
-| **Schemathesis** | Property-based fuzzing (+ stateful) | OpenAPI, GraphQL | Regression/fuzz runs in CI | Generates thousands of schema-valid requests against the real server; finds 500s, validation gaps, and — via OpenAPI links — multi-step *stateful* bugs others miss |
+| **Schemathesis** | Property-based fuzzing (+ stateful) | OpenAPI, GraphQL | Regression/fuzz runs in CI | Generates thousands of schema-valid requests against the real server; finds 500s, validation gaps, and (via OpenAPI links) multi-step *stateful* bugs others miss |
 | **PactFlow Drift** | Spec-conformance | OpenAPI (REST) | Fast, per-PR | Deterministic check that the provider's implementation matches its OAS; plug-and-play CLI |
 | **Pact / BDCT** | Consumer-driven / bi-directional | REST, gRPC, messaging | Release gating | Guarantees a provider doesn't drop or change a field a live consumer actually uses, without sharing code |
 | **Specmatic** | Async contract testing | AsyncAPI, Kafka, JMS | Consumer/producer gating | Spins a local broker, replays AsyncAPI-defined events, pulls Avro schemas from the Schema Registry, asserts topics/serialization match the contract |
 
-### Schemathesis — find what testers wouldn't think to try
+### Schemathesis: find what testers wouldn't think to try
 Property-based fuzzing built on Hypothesis: it reads the OpenAPI contract and
 generates structurally-valid-but-adversarial inputs (boundary values, unicode
 edge cases, nulls where they shouldn't be) and fires them at the real backend.
@@ -28,15 +28,15 @@ Its **stateful** mode chains operations (create → get → delete) using OpenAP
 links, which is where the nastiest bugs hide. Independent evaluation found it
 catches 1.4–4.5× more defects than comparable tools. Actively maintained.
 
-### PactFlow BDCT + Drift — release gating with `can-i-deploy`
+### PactFlow BDCT + Drift: release gating with `can-i-deploy`
 Bi-directional Contract Testing compares two artifacts statically: the consumer's
 Pact (what it actually needs) and the provider's OpenAPI (what it actually
 offers). **Drift** makes the provider's OAS enforceable against its real
 implementation. At release time, `can-i-deploy` cross-validates the provider's
 spec against every active consumer's contract and tells you, immediately, whether
-it's safe to ship — without the teams coordinating directly.
+it's safe to ship, without the teams coordinating directly.
 
-### Specmatic — the same discipline for events
+### Specmatic: the same discipline for events
 For the async half of the system, Specmatic treats the AsyncAPI document as the
 definitive contract, fetches Avro schemas straight from the Schema Registry, and
 verifies that messages flow on the right topics with the right serialization. It
@@ -48,9 +48,9 @@ development instead of in production.
 The virtualization platform (Microcks) exposes two metrics that make drift
 visible and gate-able:
 
-- **Conformance Index** — how well the contract's attached examples *cover* the
+- **Conformance Index**: how well the contract's attached examples *cover* the
   spec; i.e. how testable the API is in principle.
-- **Conformance Score** — the live result of running the conformance suite; how
+- **Conformance Score**: the live result of running the conformance suite; how
   aligned the current code actually is with the agreed contract.
 
 Put both on a shared dashboard. Make a drop in conformance score below a threshold
@@ -59,8 +59,8 @@ a pipeline rule.
 
 ## How it fits the pipeline
 
-1. Spec changes are linted (Spectral/Redocly) on every PR — naming, errors,
-   security, style — before they reach the sandbox.
+1. Spec changes are linted (Spectral/Redocly) on every PR (naming, errors,
+   security, style) before they reach the sandbox.
 2. Drift/Pact run fast per-PR conformance checks.
 3. Schemathesis runs deeper fuzz/regression passes.
 4. Specmatic gates the async services.

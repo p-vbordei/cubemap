@@ -1,52 +1,36 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Evidence Register, &lt;Client / Engagement&gt;</title>
-<style>
-  /* --- paper palette: same variables as the scrollytelling house style --- */
-  :root{
-    --bg:#faf6ef; --ink:#2b2722; --muted:#7a7065; --line:#e6ddcf; --card:#fffdf8;
-    --blue:#37708f;   /* data / information */
-    --amber:#bf7d2a;  /* decide / act */
-    --green:#4d8759;  /* ok / valid */
-    --clay:#a8503c;   /* danger / blocked */
-    --violet:#6a5a8c; /* AI / automation */
-    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  }
-  @media (prefers-color-scheme:dark){
-    :root{ --bg:#191613; --ink:#e8e1d6; --muted:#9a9083; --line:#332e27; --card:#211d18; }
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans)}
-  main{max-width:880px;margin:0 auto;padding:48px 20px 96px}
-  .kick{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:600;display:flex;align-items:center;gap:10px}
-  .kick i{display:inline-block;width:26px;height:1px;background:var(--amber)}
-  h1{font-family:var(--serif);font-size:clamp(30px,6vw,46px);line-height:1.05;font-weight:600;margin:10px 0 8px;letter-spacing:-.02em}
-  .lede{color:var(--muted);max-width:34em;margin:0 0 8px}
-  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0 34px;font-size:13px;color:var(--muted)}
-  .legend b{font-weight:600;color:var(--ink)}
-  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+<!--
+  cubemap: the deliverable gate.
 
-  /* --- one card per artifact: reads as a table on desktop, a card on a phone --- */
-  .entry{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:0 0 16px}
-  .entry header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:10px}
-  .id{font-weight:700;font-variant-numeric:tabular-nums}
-  .type{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:99px;color:var(--bg)}
-  .type.template{background:var(--blue)} .type.export{background:var(--blue)}
-  .type.receipt{background:var(--amber)} .type.report{background:var(--amber)}
-  .type.screenshot{background:var(--violet)} .type.other{background:var(--muted)}
-  .when{color:var(--muted);font-size:13.5px;margin-left:auto}
-  dl{display:grid;grid-template-columns:11em 1fr;gap:6px 16px;margin:0}
-  dt{color:var(--muted);font-size:13.5px;padding-top:1px}
-  dd{margin:0}
-  .changed{border-left:3px solid var(--green);padding-left:10px}
-  .open{border-left:3px solid var(--clay);padding-left:10px}
-  .file a{color:var(--blue)}
-  @media (max-width:560px){ dl{grid-template-columns:1fr} dt{margin-top:8px} }
-</style><!--cubemap-gate-style-->
+  Paste BOTH marked blocks below into every HTML deliverable. The STYLE block
+  goes last inside HEAD, after the dark-mode rules, so that it wins when the
+  page prints. The SCRIPT block goes last inside BODY. Copy the marker comments
+  with them: a later pass finds the blocks by those markers and replaces them.
+  Together the two blocks make the four deliverable invariants machine-checkable
+  instead of hopeful:
+
+    1. the PDF looks like the HTML   → the @media print block
+    2. no SVG text spills its box    → audit check "svg bounds"
+    3. one self-contained file       → audit check "self-contained"
+    4. readable on a phone           → audit check "nothing too wide"
+    5. NO EM-DASHES ANYWHERE         → audit check "no em-dashes" (hard fail)
+       (+ a plain-language pass, see references/plain-language.md)
+
+  RUN THE AUDIT, two ways, same code:
+    • In a browser: open the file with #audit on the end of the URL. Do this at
+      375px in the device toolbar. This is the only run that proves the phone
+      layout, because headless Chrome will not size a window below ~485px.
+    • Headless, for a script: covers every check except the 375px width.
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+          --headless=new --disable-gpu --virtual-time-budget=3000 \
+          --dump-dom "file:///ABS/PATH/file.html#audit" | grep -o 'CUBEMAP-AUDIT.*'
+
+  MAKE THE PDF (no library, no build step, Chrome is the renderer):
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+      --headless --disable-gpu --no-pdf-header-footer \
+      --print-to-pdf=out.pdf "file:///ABS/PATH/file.html"
+-->
+
+<!--cubemap-gate-style-->
 <style>
 /* --- print / PDF: the paper version must match the screen version ---
    Five things break a PDF that nobody notices on screen, and all five are
@@ -89,57 +73,8 @@
 }
 </style>
 <!--/cubemap-gate-style-->
-</head>
-<body>
-<main>
-  <p class="kick"><i></i>Evidence Register</p>
-  <h1>What the business gave us,<br>and what it changed</h1>
-  <p class="lede">One entry per artifact the client provides, template, export, receipt,
-  report, screenshot. Raw files live untouched in <code>examples/</code>; this register is
-  the index. Nothing is absorbed silently: every entry says where the artifact came from,
-  which process step it belongs to, and exactly what it changed in the model.</p>
 
-  <p class="legend">
-    <span><span class="dot" style="background:var(--blue)"></span><b>blue</b> data shape (templates, exports)</span>
-    <span><span class="dot" style="background:var(--amber)"></span><b>amber</b> working documents (receipts, reports)</span>
-    <span><span class="dot" style="background:var(--violet)"></span><b>violet</b> legacy systems (screenshots)</span>
-    <span><span class="dot" style="background:var(--green)"></span><b>green</b> folded into the model</span>
-    <span><span class="dot" style="background:var(--clay)"></span><b>clay</b> open question</span>
-  </p>
-
-  <!-- -------------------- copy one .entry per artifact -------------------- -->
-
-  <article class="entry">
-    <header>
-      <span class="id">EV-001</span>
-      <span class="type receipt">receipt</span>
-      <span class="when">received 2026-06-03 · from Maria D. (Accounting)</span>
-    </header>
-    <dl>
-      <dt>Artifact</dt>        <dd class="file">Three scanned supplier receipts ("receipt K"), <a href="receipts/EV-001/">examples/receipts/EV-001/</a></dd>
-      <dt>Process / step</dt>  <dd>Receipt-to-report · step 1 "employee receives and reads receipt"</dd>
-      <dt>Structure found</dt> <dd>vendor, date, line items, VAT, total, two of three receipts are multi-currency (RON + EUR)</dd>
-      <dt>What it changed</dt> <dd class="changed">Added <code>currency</code> to the receipt schema in <code>contracts/openapi.yaml</code>; seeded the fake with the three real value sets; narrative updated with the multi-currency case.</dd>
-      <dt>Open questions</dt>  <dd class="open">Vendor "T-Impex" receipts carry no VAT, rule or error? Asked Maria 2026-06-04.</dd>
-    </dl>
-  </article>
-
-  <article class="entry">
-    <header>
-      <span class="id">EV-002</span>
-      <span class="type template">template</span>
-      <span class="when">received &lt;date&gt; · from &lt;name, role&gt;</span>
-    </header>
-    <dl>
-      <dt>Artifact</dt>        <dd class="file">&lt;what it is, even if blank (a blank template still defines the artifact's shape&gt;) <a href="#">examples/&lt;path&gt;</a></dd>
-      <dt>Process / step</dt>  <dd>&lt;which mapped process, which step&gt;</dd>
-      <dt>Structure found</dt> <dd>&lt;fields / columns / sections extracted, confirm them with the person who gave it&gt;</dd>
-      <dt>What it changed</dt> <dd class="changed">&lt;contract fields, policies, seed data, requirements updated, filled in when the enrichment loop closes&gt;</dd>
-      <dt>Open questions</dt>  <dd class="open">&lt;anything the artifact raised that nobody could answer yet&gt;</dd>
-    </dl>
-  </article>
-
-</main><!--cubemap-gate-audit-->
+<!--cubemap-gate-audit-->
 <script>
 /* --- cubemap deliverable audit, zero dependencies, native APIs only ---
    Silent unless you ask for it: add #audit to the URL, or call
@@ -322,5 +257,3 @@
 })();
 </script>
 <!--/cubemap-gate-audit-->
-</body>
-</html>

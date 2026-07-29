@@ -1,6 +1,6 @@
 # Micro (L3): Statecharts and Taming State Explosion
 
-At the Micro level you model how a single component *behaves over time* — and you
+At the Micro level you model how a single component *behaves over time*, and you
 wire a live UI (or service logic) to that behaviour, calling the L2 fakes. The
 tool is **XState v5**, which implements Harel statecharts and the actor model.
 Behaviour modelled this way is executable: it runs in the canvas, drives the UI,
@@ -13,7 +13,7 @@ The policies you captured at Macro ("no refund before inspection," ">€10,000 n
 a manager") are state-dependent rules. Implemented as `if` statements sprinkled
 through a codebase, they rot: someone forgets a check, two flags contradict, an
 impossible state slips through. A statechart makes the rule part of the model's
-structure — the transition simply doesn't exist unless its guard passes — so the
+structure (the transition simply doesn't exist unless its guard passes) so the
 illegal path is unrepresentable. This is the "make illegal states impossible"
 commitment realised in code.
 
@@ -50,11 +50,11 @@ const returnValidation = createMachine({
 ```
 
 The custom React Flow node renders a small live UI (an "HTML fake" of the
-operator's panel) bound to this machine via `@xstate/react`'s `useMachine`. While
-the machine is in `awaitingOperatorApproval`, the node shows Approve/Reject
-buttons; clicking Approve sends `APPROVE`, the machine transitions to `approved`,
-runs `triggerRefundEvent`, and calls the mock from Meso. The whole flow is real —
-on fakes.
+operator's panel) bound to this machine via `@xstate/react`'s `useMachine`.
+While the machine is in `awaitingOperatorApproval`, the node shows
+Approve/Reject buttons; clicking Approve sends `APPROVE`, the machine
+transitions to `approved`, runs `triggerRefundEvent`, and calls the mock from
+Meso. The whole flow is real, on fakes.
 
 ## The state explosion problem, and the math that fixes it
 
@@ -90,20 +90,20 @@ growth with three constructs:
   superstate resume where it left off after an interruption.
 
 The practical payoff: the visual model stays legible as the system grows, and the
-behaviour stays provably bounded — which is also what makes it testable.
+behaviour stays provably bounded, which is also what makes it testable.
 
 ## Authoring and connecting
 
 - Author and visualise machines in **Stately Studio**, or hand-write them.
 - Run them in the canvas with **XState v5** and render UI via `@xstate/react`.
 - `invoke` services point at the **L2 fakes** during simulation and at real
-  implementations at Atomic — the machine doesn't change when the backend becomes
-  real, because it only ever knew the contract.
+  implementations at Atomic: the machine doesn't change when the backend
+  becomes real, because it only ever knew the contract.
 
 ## What you leave Micro with
 
 - A statechart per behaviourally-interesting component, with Macro policies encoded
   as guards.
 - Live, interactive nodes on the canvas that run those machines against the fakes.
-- A flow stakeholders can drive by hand — proving the *rules*, not just the happy
-  path — before any production backend exists.
+- A flow stakeholders can drive by hand: proving the *rules*, not just the
+  happy path, before any production backend exists.

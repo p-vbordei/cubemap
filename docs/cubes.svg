@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 470" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Anatomy of a cube — one capability mapped all the way down (story, policies and lexicon, contracts and fakes, statecharts, registered evidence) — handed to an AI coding app and redeployed, AI-native, one cube at a time.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 470" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Anatomy of a cube: one capability mapped all the way down (story, policies and lexicon, contracts and fakes, statecharts, registered evidence), handed to an AI coding app and redeployed, AI-native, one cube at a time.">
   <rect width="1040" height="470" rx="18" fill="#faf8f3"/>
   <rect x="0.75" y="0.75" width="1038.5" height="468.5" rx="17" fill="none" stroke="#e6e2d8" stroke-width="1.5"/>
 
   <!-- header -->
-  <text x="44" y="50" font-family="Georgia, Palatino, serif" font-size="30" font-weight="700" fill="#2a2722">Cubes — the unit of redeployment</text>
-  <text x="44" y="76" font-size="14.5" fill="#6f6d64">One capability mapped all the way down — self-contained, connected to its neighbours only through contracts.</text>
+  <text x="44" y="50" font-family="Georgia, Palatino, serif" font-size="30" font-weight="700" fill="#2a2722">Cubes: the unit of redeployment</text>
+  <text x="44" y="76" font-size="14.5" fill="#6f6d64">One capability mapped all the way down: self-contained, connected to its neighbours only through contracts.</text>
 
   <!-- ============ LEFT: anatomy of one cube ============ -->
   <rect x="48" y="104" width="404" height="320" rx="16" fill="#ffffff" stroke="#e6e2d8" stroke-width="1.5"/>
@@ -22,7 +22,7 @@
   <text x="90" y="222" font-size="14" font-weight="600" fill="#2a2722">Policies · lexicon slice</text>
   <text x="90" y="239" font-size="12" fill="#6f6d64">the rules it lives by + its share of the shared vocabulary</text>
 
-  <!-- contracts + fakes L2 (amber) — the connecting layer -->
+  <!-- contracts + fakes L2 (amber) · the connecting layer -->
   <rect x="72" y="254" width="356" height="44" rx="9" fill="#f6ebd7" stroke="#bf7d2a" stroke-width="1.2"/>
   <text x="90" y="274" font-size="14" font-weight="600" fill="#2a2722">Contracts · fakes</text>
   <text x="90" y="291" font-size="12" fill="#6f6d64">the agreements + a runnable stand-in on synthetic data</text>
@@ -31,7 +31,7 @@
   <!-- statecharts L3 (green) -->
   <rect x="72" y="306" width="356" height="44" rx="9" fill="#e3f0e5" stroke="#4d8759" stroke-width="1.2"/>
   <text x="90" y="326" font-size="14" font-weight="600" fill="#2a2722">Statecharts</text>
-  <text x="90" y="343" font-size="12" fill="#6f6d64">behaviour, with the rules as guards — illegal states unreachable</text>
+  <text x="90" y="343" font-size="12" fill="#6f6d64">behaviour, with the rules as guards: illegal states unreachable</text>
   <rect x="386" y="318" width="30" height="20" rx="5" fill="#4d8759"/><text x="401" y="332" font-size="10.5" font-weight="700" fill="#fff" text-anchor="middle">L3</text>
 
   <!-- evidence (neutral) -->
@@ -50,7 +50,7 @@
   <text x="517" y="267" font-size="12" font-weight="600" fill="#6a5a8c" text-anchor="middle">AI coding app</text>
 
   <!-- ============ RIGHT: redeploy AI-native ============ -->
-  <text x="588" y="136" font-size="11" letter-spacing="0.14em" font-weight="700" fill="#a6a399">REDEPLOY, AI-NATIVE — ONE AT A TIME</text>
+  <text x="588" y="136" font-size="11" letter-spacing="0.14em" font-weight="700" fill="#a6a399">REDEPLOY, AI-NATIVE · ONE AT A TIME</text>
 
   <!-- contract links between cubes (dashed) -->
   <g stroke="#cbb89a" stroke-width="1.4" stroke-dasharray="5 4" fill="none">
@@ -61,7 +61,7 @@
   </g>
   <text x="742" y="200" font-size="10.5" fill="#a6a399" text-anchor="middle">contract</text>
 
-  <!-- cube A — live -->
+  <!-- cube A: live -->
   <g transform="translate(672,214)">
     <polygon points="-26,-15 0,-28 26,-15 0,-2" fill="#f6ebd7" stroke="#bf7d2a" stroke-width="1.2"/>
     <polygon points="-26,-15 -26,17 0,30 0,-2" fill="#e2eef3" stroke="#37708f" stroke-width="1.2"/>
@@ -70,7 +70,7 @@
   <rect x="648" y="162" width="48" height="20" rx="10" fill="#e3f0e5" stroke="#4d8759" stroke-width="1"/>
   <text x="672" y="176" font-size="11" font-weight="700" fill="#4d8759" text-anchor="middle">live</text>
 
-  <!-- cube B — implemented by AI (highlighted) -->
+  <!-- cube B: implemented by AI (highlighted) -->
   <circle cx="812" cy="206" r="40" fill="#ece6f4" opacity="0.55"/>
   <g transform="translate(812,206)">
     <polygon points="-26,-15 0,-28 26,-15 0,-2" fill="#ece6f4" stroke="#6a5a8c" stroke-width="1.6"/>
@@ -81,7 +81,7 @@
   <rect x="760" y="246" width="104" height="22" rx="11" fill="#ece6f4" stroke="#6a5a8c" stroke-width="1"/>
   <text x="812" y="261" font-size="11" font-weight="700" fill="#6a5a8c" text-anchor="middle">implemented by AI</text>
 
-  <!-- cube C — on fakes -->
+  <!-- cube C: on fakes -->
   <g transform="translate(930,276)">
     <polygon points="-26,-15 0,-28 26,-15 0,-2" fill="#f6ebd7" stroke="#bf7d2a" stroke-width="1.2"/>
     <polygon points="-26,-15 -26,17 0,30 0,-2" fill="#e2eef3" stroke="#37708f" stroke-width="1.2"/>
@@ -90,7 +90,7 @@
   <rect x="898" y="316" width="64" height="20" rx="10" fill="#f6ebd7" stroke="#bf7d2a" stroke-width="1"/>
   <text x="930" y="330" font-size="11" font-weight="700" fill="#a06a1f" text-anchor="middle">on fakes</text>
 
-  <!-- cube D — next -->
+  <!-- cube D: next -->
   <g transform="translate(744,336)" opacity="0.85">
     <polygon points="-26,-15 0,-28 26,-15 0,-2" fill="#f3efe6" stroke="#a6a399" stroke-width="1.2"/>
     <polygon points="-26,-15 -26,17 0,30 0,-2" fill="#f3efe6" stroke="#a6a399" stroke-width="1.2"/>

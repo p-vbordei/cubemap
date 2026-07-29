@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 430" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Virtualize early, enrich progressively: a fake matures from schema-only synthetic data, to example-seeded, to stateful simulation, to real implementation — fed by one contract and by real client examples.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 430" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Virtualize early, enrich progressively: a fake matures from schema-only synthetic data, to example-seeded, to stateful simulation, to real implementation, fed by one contract and by real client examples.">
   <rect width="1080" height="430" rx="18" fill="#faf8f3"/>
   <rect x="0.75" y="0.75" width="1078.5" height="428.5" rx="17" fill="none" stroke="#e6e2d8" stroke-width="1.5"/>
 
   <text x="40" y="46" font-family="Georgia, Palatino, serif" font-size="27" font-weight="700" fill="#2a2722">You don't wait for the data</text>
-  <text x="40" y="71" font-size="14" fill="#6f6d64">A fake is runnable on day one and gets truer with every real example. Stage 3 quietly replaces the others — the flow never stops.</text>
+  <text x="40" y="71" font-size="14" fill="#6f6d64">A fake is runnable on day one and gets truer with every real example. Stage 3 quietly replaces the others. The flow never stops.</text>
 
   <!-- contract feeder -->
   <rect x="40" y="92" width="1000" height="30" rx="15" fill="#f6e3dd" stroke="#b14d3b" stroke-width="1.2"/>
-  <text x="540" y="111" font-size="13" font-weight="700" fill="#b14d3b" text-anchor="middle">ONE CONTRACT defines the shape — every fake below obeys it</text>
+  <text x="540" y="111" font-size="13" font-weight="700" fill="#b14d3b" text-anchor="middle">ONE CONTRACT defines the shape · every fake below obeys it</text>
 
   <!-- stage cards -->
   <g>
@@ -56,6 +56,6 @@
   </g>
 
   <!-- enrichment loop -->
-  <text x="40" y="350" font-size="13.5" fill="#6f6d64">↻ <tspan font-weight="700" fill="#2a2722">Enrichment loop:</tspan> each real example the client hands over walks a node toward the right — no waiting for complete data.</text>
+  <text x="40" y="350" font-size="13.5" fill="#6f6d64">↻ <tspan font-weight="700" fill="#2a2722">Enrichment loop:</tspan> each real example the client hands over walks a node toward the right. No waiting for complete data.</text>
   <text x="40" y="372" font-size="12.5" fill="#a6a399">contract → synthetic fake → seeded fake → stateful sim → real adapter (which must match the fake)</text>
 </svg>

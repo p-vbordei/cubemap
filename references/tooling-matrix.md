@@ -1,8 +1,9 @@
 # The Verified 2026 Tooling Matrix
 
-The full stack behind Infinite Zoom & Fakes-First, grouped by the job it does, with
-selection guidance. All entries verified current as of mid-2026. Don't adopt a tool
-before the zoom level calls for it — the matrix is a menu, not a checklist.
+The full stack behind Infinite Zoom & Fakes-First, grouped by the job it does,
+with selection guidance. All entries verified current as of mid-2026. Don't
+adopt a tool before the zoom level calls for it: the matrix is a menu, not a
+checklist.
 
 ## By layer
 
@@ -20,7 +21,7 @@ before the zoom level calls for it — the matrix is a menu, not a checklist.
 | | **Spectral** (or Redocly / Vacuum) | Spec style-guide linting in CI | enforce naming/errors/security before sandbox |
 | | Bump.sh / Redocly | Auto-published API docs/catalog | transparent contract catalogue |
 | **Fakes & simulation** (Meso/virtualization) | **Microcks** | Shared org-level sandbox | ingests all four contract types from Git; **sync-to-async triggers** (≥1.14.0); exposes conformance metrics; emerging MCP server |
-| | **Counterfact** | Stateful local TS simulator | typed handlers from the spec (drift caught in-editor), holds state, REPL to inject failures — ideal for the enrichment loop |
+| | **Counterfact** | Stateful local TS simulator | typed handlers from the spec (drift caught in-editor), holds state, REPL to inject failures, ideal for the enrichment loop |
 | | Prism | Quick OpenAPI dynamic mocks | CLI, Faker-backed stubs |
 | | MSW | Browser request interception | frontend dev/tests |
 | | WireMock | Heavy third-party HTTP virtualization | for dependencies you don't control |
@@ -53,7 +54,7 @@ together, and the CI gating story are detailed in
 
 ## The through-line
 
-Notice that one artifact — the contract — feeds the fakes (Microcks/Counterfact),
+Notice that one artifact (the contract) feeds the fakes (Microcks/Counterfact),
 the type generation (Atomic code), the tests (Schemathesis/Pact/Specmatic), and the
 docs (Bump.sh). That's the point: a single source of truth, defined at Meso from
 the business map, drives simulation, implementation, validation, and documentation

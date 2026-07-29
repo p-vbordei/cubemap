@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" font-family="Georgia, 'Iowan Old Style', Palatino, serif" role="img" aria-label="cubemap — map a business from boardroom to code, one zoom at a time">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" font-family="Georgia, 'Iowan Old Style', Palatino, serif" role="img" aria-label="cubemap: map a business from boardroom to code, one zoom at a time">
   <rect width="1200" height="440" rx="20" fill="#faf8f3"/>
   <rect x="0.75" y="0.75" width="1198.5" height="438.5" rx="19" fill="none" stroke="#e6e2d8" stroke-width="1.5"/>
 
@@ -12,7 +12,7 @@
   <text x="70" y="208" font-size="116" font-weight="700" fill="#2a2722" letter-spacing="-2">cubemap</text>
 
   <!-- tagline -->
-  <text x="74" y="262" font-size="29" fill="#2a2722">Map a business from boardroom to code —</text>
+  <text x="74" y="262" font-size="29" fill="#2a2722">Map a business from boardroom to code,</text>
   <text x="74" y="300" font-size="29" fill="#6f6d64">one zoom at a time.</text>
 
   <!-- footer chips -->

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>cubemap — map the business, then build it one cube at a time</title>
+<title>cubemap, map the business, then build it one cube at a time</title>
 <style>
   :root{
     --bg:#faf8f3; --surface:#ffffff; --ink:#2a2722; --muted:#6f6d64; --faint:#a6a399;
@@ -27,7 +27,7 @@
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
   /* progress + rail */
-  #bar{position:fixed;top:0;left:0;height:3px;background:var(--amber);width:0;z-index:50;transition:width .1s linear}
+  #bar{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--amber);transform:scaleX(0);transform-origin:0 50%;z-index:50;transition:transform .1s linear}
   #rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:11px}
   #rail a{width:9px;height:9px;border-radius:50%;background:var(--line);border:1px solid var(--faint);display:block;position:relative;transition:all .2s}
   #rail a.on{background:var(--amber);border-color:var(--amber);transform:scale(1.35)}
@@ -68,7 +68,49 @@
   .arr{stroke:var(--faint);stroke-width:1.6;fill:none}
   .flow{stroke:var(--blue);stroke-width:2.6;fill:none}
   .dash{stroke-dasharray:5 4}
+</style><!--cubemap-gate-style-->
+<style>
+/* --- print / PDF: the paper version must match the screen version ---
+   Five things break a PDF that nobody notices on screen, and all five are
+   fixed here: scroll-reveal never fires so content prints blank; the dark
+   palette prints as unreadable ink; Chrome drops CSS backgrounds; vh heights
+   blow one chapter up to a whole page; fixed chrome repeats on every page. */
+@media print{
+  @page{ margin:14mm }
+
+  /* always print the light palette, whatever the OS theme is */
+  :root{
+    --bg:#fff; --surface:#fff; --card:#fff; --ink:#1e1c19; --muted:#57544d; --faint:#8a8780;
+    --line:#d8d3c7;
+    --amber:#a2661d; --amber-s:#f7edda; --blue:#2b6180; --blue-s:#e4eff4;
+    --green:#3d7247; --green-s:#e5f1e7; --clay:#993f2d; --clay-s:#f7e5df;
+    --violet:#584a79; --violet-s:#ede7f5;
+  }
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact }
+  html,body{ background:#fff; font-size:11.5pt }
+
+  /* screen-only chrome */
+  #bar,#rail,.scroll-hint,#cubemap-audit{ display:none !important }
+
+  /* the IntersectionObserver never runs while printing, un-hide everything */
+  .reveal{ opacity:1 !important; transform:none !important }
+
+  /* vh heights and the flex centring are for scrolling, not for paper */
+  .chap{ min-height:0; max-width:none; display:block; padding:0 0 20pt;
+         break-inside:avoid; page-break-inside:avoid }
+  .hero{ min-height:0 }
+  main{ max-width:none; padding:0 }
+
+  h1{ font-size:28pt } h2{ font-size:16pt } .lede{ font-size:12pt } .cap{ font-size:10pt }
+  h1,h2,.kick{ break-after:avoid; page-break-after:avoid }
+
+  figure,.entry,article,table,dl{ break-inside:avoid; page-break-inside:avoid }
+  figure{ margin:12pt 0 0 }
+  svg{ max-height:165mm }            /* a tall diagram must not be clipped by the page */
+  a{ color:inherit; text-decoration:none }
+}
 </style>
+<!--/cubemap-gate-style-->
 </head>
 <body>
 <div id="bar"></div>
@@ -88,8 +130,8 @@
 <!-- HERO -->
 <section class="chap hero" id="hero">
   <div class="kick reveal"><i></i>the infinite zoom &amp; fakes-first method</div>
-  <h1 class="reveal">Map the business.<br>Then build it —<br>one cube at a time.</h1>
-  <p class="lede reveal">cubemap takes how an organisation actually works — a conversation, an Excel, a receipt processed by hand — and turns it into functional requirements, a running simulation, and finally <b>cubes</b>: self-contained capability packages an AI coding app can implement.</p>
+  <h1 class="reveal">Map the business.<br>Then build it,<br>one cube at a time.</h1>
+  <p class="lede reveal">cubemap takes how an organisation actually works: a conversation, an Excel, a receipt processed by hand. It turns that into functional requirements, then a running simulation, then <b>cubes</b>. A cube is a self-contained capability package an AI coding app can implement.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 200" role="img" aria-label="The people and their business become a shared map, then a running simulation, then cubes an AI can implement.">
       <rect x="34" y="64" width="156" height="72" rx="11" class="blue"/>
@@ -127,11 +169,11 @@
 <section class="chap" id="c1">
   <div class="kick reveal"><i></i>chapter one · why builds fail</div>
   <h2 class="reveal">A sentence is a whole system in disguise.</h2>
-  <p class="cap reveal">A team rarely fails because the code was bad. It fails because <b>nobody ever drew the business clearly enough</b> for everyone — the client included — to point at it and say <i>"yes, that's how it works."</i> Take one ordinary moment and it unfolds into actors, steps, and a rule nobody wrote down.</p>
+  <p class="cap reveal">A team rarely fails because the code was bad. It fails because <b>nobody ever drew the business clearly enough</b> for everyone (the client included) to point at it and say <i>"yes, that's how it works."</i> Take one ordinary moment and it unfolds into actors, steps, and a rule nobody wrote down.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 300" role="img" aria-label="The sentence 'Dana's order arrived scratched, she wants her money back' unfolds into a chain of actors and steps with a hidden approval policy.">
       <rect x="70" y="26" width="680" height="46" rx="10" class="amber"/>
-      <text class="tb" x="410" y="48" text-anchor="middle">"Dana's order arrived scratched — she wants her money back."</text>
+      <text class="tb" x="410" y="48" text-anchor="middle">"Dana's order arrived scratched. She wants her money back."</text>
       <text class="ts" x="410" y="65" text-anchor="middle">one human moment</text>
       <line class="arr dash" x1="410" y1="72" x2="410" y2="104" marker-end="url(#a1)"/>
       <text class="lab" x="470" y="93" text-anchor="middle">unfolds into…</text>
@@ -154,7 +196,7 @@
         <marker id="a1c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
       </defs>
     </svg>
-    <figcaption>The work is pulling that apart — out loud, with the people who live it — before any of it is expensive to get wrong.</figcaption>
+    <figcaption>The work is pulling that apart (out loud, with the people who live it) before any of it is expensive to get wrong.</figcaption>
   </figure>
 </section>
 
@@ -162,7 +204,7 @@
 <section class="chap" id="c2">
   <div class="kick reveal"><i></i>chapter two · start at the top</div>
   <h2 class="reveal">Draw it with the people who run it.</h2>
-  <p class="cap reveal">The first altitude is the business itself. You run an <b>Event Storming</b> session on a shared canvas: the things that <b>happen</b> (past-tense events), the <b>rules</b> they live by, and the <b>questions nobody can answer yet</b> — all in the client's own words. The map is the artifact everyone can read, the boardroom and the engineer alike.</p>
+  <p class="cap reveal">The first altitude is the business itself. You run an <b>Event Storming</b> session on a shared canvas: the things that <b>happen</b> (past-tense events), the <b>rules</b> they live by, and the <b>questions nobody can answer yet</b>, all in the client's own words. The map is the artifact everyone can read, the boardroom and the engineer alike.</p>
   <div class="legend reveal">
     <span><i style="background:var(--amber)"></i>event</span>
     <span><i style="background:var(--blue)"></i>policy / rule</span>
@@ -200,13 +242,13 @@
 <section class="chap" id="c3">
   <div class="kick reveal"><i></i>chapter three · the spine</div>
   <h2 class="reveal">One map. Four altitudes.</h2>
-  <p class="cap reveal">Like Google Maps for a system: stand at country level and see whole capabilities, then zoom to the street level of a single function. Each altitude takes the one above as its input, and <b>you never add detail below that contradicts the picture above</b>. One contract threads through all four — so a line of code always traces back to a business reason.</p>
+  <p class="cap reveal">Like Google Maps for a system: stand at country level and see whole capabilities, then zoom to the street level of a single function. Each altitude takes the one above as its input, and <b>you never add detail below that contradicts the picture above</b>. One contract threads through all four, so a line of code always traces back to a business reason.</p>
   <figure class="reveal">
-    <svg viewBox="0 0 820 320" role="img" aria-label="Four stacked altitude bands — Macro, Meso, Micro, Atomic — linked by a single contract through-line on the right.">
+    <svg viewBox="0 0 820 320" role="img" aria-label="Four stacked altitude bands (Macro, Meso, Micro, Atomic) linked by a single contract through-line on the right.">
       <!-- L1 -->
       <rect x="30" y="20" width="690" height="62" rx="10" class="blue"/>
       <rect x="30" y="20" width="64" height="62" rx="10" fill="var(--blue)"/><text x="62" y="50" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">L1</text><text x="62" y="67" fill="#fff" font-size="9" text-anchor="middle" opacity="0.85">MACRO</text>
-      <text class="tb" x="110" y="46">Map the business — capabilities, events, policies</text><text class="ts" x="110" y="66">CEO / domain expert · the "why", in the client's words</text>
+      <text class="tb" x="110" y="46">Map the business, capabilities, events, policies</text><text class="ts" x="110" y="66">CEO / domain expert · the "why", in the client's words</text>
       <!-- L2 -->
       <rect x="30" y="92" width="690" height="62" rx="10" class="amber"/>
       <rect x="30" y="92" width="64" height="62" rx="10" fill="var(--amber)"/><text x="62" y="122" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">L2</text><text x="62" y="139" fill="#fff" font-size="9" text-anchor="middle" opacity="0.85">MESO</text>
@@ -218,14 +260,14 @@
       <!-- L4 -->
       <rect x="30" y="236" width="690" height="62" rx="10" class="violet"/>
       <rect x="30" y="236" width="64" height="62" rx="10" fill="var(--violet)"/><text x="62" y="266" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">L4</text><text x="62" y="283" fill="#fff" font-size="9" text-anchor="middle" opacity="0.85">ATOMIC</text>
-      <text class="tb" x="110" y="262">Real code replaces the fakes — one node at a time</text><text class="ts" x="110" y="282">engineer / AI coding app · contract-tested · drift can't slip through</text>
+      <text class="tb" x="110" y="262">Real code replaces the fakes, one node at a time</text><text class="ts" x="110" y="282">engineer / AI coding app · contract-tested · drift can't slip through</text>
 
       <!-- through-line -->
       <line class="arr dash" x1="752" y1="34" x2="752" y2="284" stroke="var(--contract)"/>
       <g fill="var(--contract)"><circle cx="752" cy="51" r="3.4"/><circle cx="752" cy="123" r="3.4"/><circle cx="752" cy="195" r="3.4"/><circle cx="752" cy="267" r="3.4"/></g>
       <text x="772" y="160" font-size="12" fill="var(--contract)" transform="rotate(90 772 160)" text-anchor="middle">ONE CONTRACT · the through-line</text>
     </svg>
-    <figcaption>You can revisit a higher altitude any time — but never introduce detail below that breaks the picture above.</figcaption>
+    <figcaption>You can revisit a higher altitude any time, but never introduce detail below that breaks the picture above.</figcaption>
   </figure>
 </section>
 
@@ -233,7 +275,7 @@
 <section class="chap" id="c4">
   <div class="kick reveal"><i></i>chapter four · fakes-first</div>
   <h2 class="reveal">You don't wait for the data.</h2>
-  <p class="cap reveal">This is the part most teams get wrong. A contract defines the <b>shape</b> of the data — and that shape alone is enough to generate plausible synthetic data and serve it from a <b>fake</b>. The moment a contract exists at the Meso level, the whole flow is <b>clickable on day one</b> — no real backend, no complete examples, no waiting.</p>
+  <p class="cap reveal">This is the part most teams get wrong. A contract defines the <b>shape</b> of the data, and that shape alone is enough to generate plausible synthetic data and serve it from a <b>fake</b>. The moment a contract exists at the Meso level, the whole flow is <b>clickable on day one</b>: no real backend, no complete examples, no waiting.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 220" role="img" aria-label="A contract defines the shape; a fake obeys it and serves synthetic data; the UI flow is clickable immediately.">
       <rect x="40" y="74" width="170" height="72" rx="11" class="amber"/>
@@ -253,15 +295,15 @@
       <line class="arr" x1="495" y1="110" x2="608" y2="110" marker-end="url(#a4)"/><text class="lab" x="551" y="100" text-anchor="middle">feeds</text>
       <defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
-    <figcaption>A simulation built from the model alone is enough to walk a client through their own process — and find what's missing.</figcaption>
+    <figcaption>A simulation built from the model alone is enough to walk a client through their own process, and find what's missing.</figcaption>
   </figure>
 </section>
 
 <!-- CH5 -->
 <section class="chap" id="c5">
   <div class="kick reveal"><i></i>chapter five · the loop</div>
-  <h2 class="reveal">Every example makes it truer — and gets registered.</h2>
-  <p class="cap reveal">As real examples arrive — an Excel export, a blank form, a receipt — each one walks a node from coarse synthetic toward production-real, and the simulation converges on reality. Nothing is absorbed silently: every artifact is logged in an <b>evidence register</b>, so any part of the model traces back to the piece of client evidence that justified it.</p>
+  <h2 class="reveal">Every example makes it truer, and gets registered.</h2>
+  <p class="cap reveal">As real examples arrive (an Excel export, a blank form, a receipt) each one walks a node from coarse synthetic toward production-real, and the simulation converges on reality. Nothing is absorbed silently: every artifact is logged in an <b>evidence register</b>, so any part of the model traces back to the piece of client evidence that justified it.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 250" role="img" aria-label="A four-stage maturity ladder from schema-only to real code, above an evidence register row.">
       <rect x="30" y="26" width="170" height="70" rx="10" class="blue"/><text class="ts t-blue" x="115" y="46" text-anchor="middle">STAGE 0</text><text class="tb" x="115" y="66" text-anchor="middle">Schema-only</text><text class="ts" x="115" y="84" text-anchor="middle">synthetic from types</text>
@@ -277,7 +319,7 @@
       <rect x="30" y="158" width="734" height="66" rx="10" class="box"/>
       <text class="ts" x="48" y="180" font-weight="700" fill="var(--faint)">EVIDENCE REGISTER</text>
       <line x1="48" y1="190" x2="746" y2="190" stroke="var(--line)" stroke-width="1"/>
-      <text class="ts" x="48" y="210">EV-001 · "scratched-order receipt.xlsx" · from Dana's case file · 12 Mar · seeds the Refund fake · changed contract field <tspan font-style="italic">currency</tspan></text>
+      <text class="ts" x="48" y="210">EV-001 · "scratched-order receipt.xlsx" · from Dana · 12 Mar · seeds the Refund fake · changed field <tspan font-style="italic">currency</tspan></text>
       <defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
     <figcaption>Early fakes are coarse; later fakes look like production; eventually real code quietly replaces them. The register makes the whole climb auditable.</figcaption>
@@ -300,7 +342,7 @@
 
       <!-- blocked illegal transition -->
       <path class="arr dash" d="M150 96 C330 36 540 36 700 92" stroke="var(--clay)" fill="none"/>
-      <text class="t-clay lab" x="425" y="46" text-anchor="middle">[ not inspected ] — guard blocks this</text>
+      <text class="t-clay lab" x="425" y="46" text-anchor="middle">[ not inspected ], guard blocks this</text>
       <g stroke="var(--clay)" stroke-width="2.4"><line x1="413" y1="44" x2="437" y2="68"/><line x1="437" y1="44" x2="413" y2="68"/></g>
       <defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
@@ -312,15 +354,15 @@
 <section class="chap" id="c7">
   <div class="kick reveal"><i></i>chapter seven · the endpoint</div>
   <h2 class="reveal">It ends in cubes, not a report.</h2>
-  <p class="cap reveal">The name is literal. A <b>cube</b> is one capability mapped all the way down — its story, its policies and slice of the lexicon, its contracts and fakes, its statecharts, and its registered evidence — one self-contained block. Because it speaks to its neighbours <b>only through its contracts</b>, it can be picked up and handed off on its own.</p>
+  <p class="cap reveal">The name is literal. A <b>cube</b> is one capability mapped all the way down, its story, its policies and slice of the lexicon, its contracts and fakes, its statecharts, and its registered evidence: one self-contained block. Because it speaks to its neighbours <b>only through its contracts</b>, it can be picked up and handed off on its own.</p>
   <figure class="reveal">
-    <svg viewBox="0 0 820 280" role="img" aria-label="One cube as a stack of five layers — story, policies and lexicon, contracts and fakes, statecharts, evidence — with a single contract port on its edge.">
+    <svg viewBox="0 0 820 280" role="img" aria-label="One cube as a stack of five layers (story, policies and lexicon, contracts and fakes, statecharts, evidence) with a single contract port on its edge.">
       <rect x="220" y="20" width="380" height="246" rx="16" class="box"/>
       <text class="ts" x="244" y="46" font-weight="700" fill="var(--faint)">ONE CUBE · THE REFUND CAPABILITY</text>
-      <rect x="244" y="58" width="332" height="36" rx="8" class="blue"/><text class="t" x="262" y="81">Story &amp; narratives — L1</text>
+      <rect x="244" y="58" width="332" height="36" rx="8" class="blue"/><text class="t" x="262" y="81">Story &amp; narratives, L1</text>
       <rect x="244" y="100" width="332" height="36" rx="8" class="violet"/><text class="t" x="262" y="123">Policies · lexicon slice</text>
-      <rect x="244" y="142" width="332" height="36" rx="8" class="amber"/><text class="t" x="262" y="165">Contracts · fakes — L2</text>
-      <rect x="244" y="184" width="332" height="36" rx="8" class="green"/><text class="t" x="262" y="207">Statecharts — L3</text>
+      <rect x="244" y="142" width="332" height="36" rx="8" class="amber"/><text class="t" x="262" y="165">Contracts · fakes, L2</text>
+      <rect x="244" y="184" width="332" height="36" rx="8" class="green"/><text class="t" x="262" y="207">Statecharts, L3</text>
       <rect x="244" y="226" width="332" height="32" rx="8" class="box dash"/><text class="ts" x="262" y="246">Registered evidence</text>
       <!-- contract port -->
       <line x1="576" y1="160" x2="628" y2="160" stroke="var(--amber)" stroke-width="1.6"/>
@@ -328,15 +370,15 @@
       <text class="ts t-amber" x="650" y="150">talks only</text><text class="ts t-amber" x="650" y="166">through its</text><text class="ts t-amber" x="650" y="182">contract</text>
       <text class="ts t-amber" x="192" y="160" text-anchor="end">self-</text><text class="ts t-amber" x="192" y="176" text-anchor="end">contained</text>
     </svg>
-    <figcaption>The business person never writes a technical spec — the mapping <i>is</i> the spec, with the acceptance criteria as its tests.</figcaption>
+    <figcaption>The business person never writes a technical spec, the mapping <i>is</i> the spec, with the acceptance criteria as its tests.</figcaption>
   </figure>
 </section>
 
 <!-- CH8 -->
 <section class="chap" id="c8">
   <div class="kick reveal"><i></i>chapter eight · redeployment</div>
-  <h2 class="reveal">Pick a cube up. Stand it back up — AI-native.</h2>
-  <p class="cap reveal">Hand a cube to an AI coding app with a one-sentence brief — <i>"implement this against these contracts and statecharts; the acceptance criteria are your tests; change neither"</i> — and it drops into the running system in place of its fake. Implement one cube, run another on its fakes a while longer, give a third to a different team. The organisation is redeployed, AI-native, one cube at a time.</p>
+  <h2 class="reveal">Pick a cube up. Stand it back up, AI-native.</h2>
+  <p class="cap reveal">Hand a cube to an AI coding app with a one-sentence brief: <i>"implement this against these contracts and statecharts. The acceptance criteria are your tests. Change neither."</i> It drops into the running system in place of its fake. Implement one cube, run another on its fakes a while longer, give a third to a different team. The organisation is redeployed, AI-native, one cube at a time.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 280" role="img" aria-label="A constellation of cubes linked by contracts: one is being implemented by an AI coding app, others remain live or on fakes.">
       <g stroke="var(--contract)" stroke-width="1.4" stroke-dasharray="5 4" fill="none">
@@ -355,7 +397,7 @@
       <circle cx="400" cy="96" r="46" fill="var(--violet-s)" opacity="0.5"/>
       <g transform="translate(400,96)">
         <polygon points="-30,-17 0,-32 30,-17 0,-2" fill="var(--violet-s)" stroke="var(--violet)" stroke-width="1.6"/><polygon points="-30,-17 -30,19 0,34 0,-2" fill="var(--blue-s)" stroke="var(--violet)" stroke-width="1.6"/><polygon points="30,-17 30,19 0,34 0,-2" fill="var(--green-s)" stroke="var(--violet)" stroke-width="1.6"/>
-        <text x="0" y="-22" text-anchor="middle" class="t-violet" font-size="13">✦</text>
+        <text x="0" y="-13" text-anchor="middle" class="t-violet" font-size="12">✦</text>
       </g>
       <rect x="332" y="142" width="136" height="24" rx="12" class="violet"/><text class="ts t-violet" x="400" y="158" text-anchor="middle" font-weight="700">implemented by AI</text>
 
@@ -369,7 +411,7 @@
       </g>
       <text class="lab" x="330" y="264" text-anchor="middle">next</text>
     </svg>
-    <figcaption>Each cube carries its own "why" with it, so it can be recombined, replaced, or run on its own — an organisation made of interchangeable, AI-native parts.</figcaption>
+    <figcaption>Each cube carries its own "why" with it, so it can be recombined, replaced, or run on its own: an organisation made of interchangeable, AI-native parts.</figcaption>
   </figure>
 </section>
 
@@ -377,7 +419,7 @@
 <section class="chap" id="c9">
   <div class="kick reveal"><i></i>chapter nine · who drives</div>
   <h2 class="reveal">Two ways to use it.</h2>
-  <p class="cap reveal">It runs from either side of the table. A consultant can drive it as a playbook with the client — or you can hand the skill to a non-technical department manager and say <i>"talk to the AI until your processes are mapped."</i> In that mode the AI becomes the facilitator: it leads, they answer, it shows the picture back, and it keeps going until the map is complete.</p>
+  <p class="cap reveal">It runs from either side of the table. A consultant can drive it as a playbook with the client. Or you hand the skill to a non-technical department manager and say <i>"talk to the AI until your processes are mapped."</i> In that mode the AI becomes the facilitator: it leads, they answer, it shows the picture back, and it keeps going until the map is complete.</p>
   <figure class="reveal">
     <svg viewBox="0 0 820 200" role="img" aria-label="Two modes side by side: a consultant facilitating with a shared canvas, and a client manager talking to the AI which leads the session.">
       <rect x="24" y="24" width="370" height="152" rx="14" class="box"/>
@@ -395,7 +437,7 @@
       <circle cx="466" cy="116" r="13" class="box"/><circle cx="466" cy="111" r="4.5" fill="var(--ink)"/><path d="M456 128 q10 -11 20 0" fill="var(--ink)"/>
       <line class="arr" x1="486" y1="116" x2="516" y2="116" marker-end="url(#a9)"/>
       <rect x="520" y="100" width="150" height="34" rx="9" class="violet"/><text class="ts t-violet" x="595" y="115" text-anchor="middle" font-weight="700">the AI</text><text class="ts" x="595" y="129" text-anchor="middle">leads the session</text>
-      <text class="ts" x="450" y="160">no jargon, no consultant — it does the translating</text>
+      <text class="ts" x="450" y="160">no jargon, no consultant. It does the translating</text>
       <defs><marker id="a9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
     </svg>
   </figure>
@@ -412,7 +454,7 @@
   function onScroll(){
     var h=document.documentElement;
     var p=h.scrollTop/(h.scrollHeight-h.clientHeight);
-    bar.style.width=(p*100)+'%';
+    bar.style.transform='scaleX('+p+')';
   }
   window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
   var ro=new IntersectionObserver(function(es){
@@ -429,6 +471,188 @@
   },{threshold:0.5});
   sections.forEach(function(s){so.observe(s);});
 })();
+</script><!--cubemap-gate-audit-->
+<script>
+/* --- cubemap deliverable audit, zero dependencies, native APIs only ---
+   Silent unless you ask for it: add #audit to the URL, or call
+   window.cubemapAudit() from a console or a headless driver. */
+(function(){
+  var SVGNS='http://www.w3.org/2000/svg';
+  var MARKETING=/\b(leverage|utili[sz]e|facilitate|seamless(ly)?|robust|cutting.edge|best.in.class|game.chang\w+|unlock\w*|empower\w*|delve|in today's [\w\s]*world|it is important to note)\b/gi;
+
+  function externals(){
+    var bad=[], inert=/^\s*(data:|#|$)/i;
+    [].forEach.call(document.querySelectorAll('*'),function(el){
+      var tag=el.tagName.toLowerCase();
+      ['src','data','href','xlink:href','poster'].forEach(function(a){
+        if(tag==='a'&&a==='href') return;               // links out are fine; loads are not
+        var u=el.getAttribute(a);
+        if(u&&!inert.test(u)) bad.push(tag+'['+a+'] → '+u.trim().slice(0,64));
+      });
+    });
+    [].forEach.call(document.querySelectorAll('style'),function(s){
+      var m=s.textContent.match(/@import[^;]*|url\(\s*(?!["']?(data:|#))[^)]*\)/gi);
+      if(m) m.forEach(function(x){ bad.push('css → '+x.trim().slice(0,64)); });
+    });
+    return bad;
+  }
+
+  /* bbox of an element expressed in its own <svg>'s viewBox coordinates */
+  function userBox(el,svg){
+    var b,m; try{ b=el.getBBox(); }catch(e){ return null; }
+    var root=svg.getScreenCTM(), own=el.getScreenCTM();
+    if(!root||!own) return null;                        // in <defs>, or not rendered
+    m=root.inverse().multiply(own);
+    var xs=[],ys=[];
+    [[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]].forEach(function(p){
+      var q=svg.createSVGPoint(); q.x=p[0]; q.y=p[1]; q=q.matrixTransform(m); xs.push(q.x); ys.push(q.y);
+    });
+    return {x:Math.min.apply(0,xs),y:Math.min.apply(0,ys),
+            X:Math.max.apply(0,xs),Y:Math.max.apply(0,ys)};
+  }
+
+  function svgBounds(){
+    var bad=[], T=0.75;                                 // sub-pixel slack
+    [].forEach.call(document.querySelectorAll('svg[viewBox]'),function(svg,i){
+      if(svg.closest('defs,marker,symbol')) return;
+      var v=svg.viewBox.baseVal, tag='svg#'+(i+1)+' ('+v.width+'×'+v.height+')';
+      var rects=[];
+      [].forEach.call(svg.querySelectorAll('rect,circle,ellipse,polygon'),function(el){
+        if(el.closest('defs,marker,symbol')) return;
+        var b=userBox(el,svg); if(b) rects.push(b);
+      });
+      [].forEach.call(svg.querySelectorAll('text'),function(el){
+        if(el.closest('defs,marker,symbol')) return;
+        var b=userBox(el,svg); if(!b) return;
+        var s='"'+(el.textContent||'').trim().slice(0,42)+'"';
+        // a) outside the viewBox, the label is simply cropped away
+        if(b.x<v.x-T||b.y<v.y-T||b.X>v.x+v.width+T||b.Y>v.y+v.height+T)
+          bad.push(tag+' · outside viewBox · '+s);
+        // b) inside a shape that does not contain it, the classic overflow
+        var host=null;
+        rects.forEach(function(r){
+          var cx=(b.x+b.X)/2, cy=(b.y+b.Y)/2;
+          if(cx<r.x||cx>r.X||cy<r.y||cy>r.Y) return;    // centre not in this shape
+          if(!host||(r.X-r.x)*(r.Y-r.y)<(host.X-host.x)*(host.Y-host.y)) host=r;
+        });
+        if(host&&(b.x<host.x-T||b.X>host.X+T||b.y<host.y-T||b.Y>host.Y+T))
+          bad.push(tag+' · overflows its shape by '+
+            Math.ceil(Math.max(host.x-b.x,b.X-host.X,host.y-b.y,b.Y-host.Y))+'px · '+s);
+      });
+    });
+    return bad;
+  }
+
+  /* Em-dashes are forbidden outright. They are the single loudest signal that a
+     machine wrote the text, and a deliverable that reads as machine-written
+     costs the trust the whole engagement runs on. Use a comma, a colon, a
+     period, or parentheses. This check never warns: it fails. */
+  function emDashes(){
+    var bad=[], parts=[];
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT), n;
+    while((n=w.nextNode())){
+      var p=n.parentNode&&n.parentNode.nodeName;
+      if(p!=='SCRIPT'&&p!=='STYLE') parts.push(n.nodeValue);
+    }
+    [].forEach.call(document.querySelectorAll('[aria-label],[alt],[title]'),function(el){
+      parts.push(el.getAttribute('aria-label')||'', el.getAttribute('alt')||'', el.getAttribute('title')||'');
+    });
+    /* U+2014 is escaped below so that this detector is itself clean */
+    var re=/[^\n]{0,34}(—|\s--\s)[^\n]{0,34}/g, m, t=parts.join('\n');
+    while((m=re.exec(t))&&bad.length<12) bad.push('"'+m[0].replace(/\s+/g,' ').trim()+'"');
+    return bad;
+  }
+
+  function prose(){
+    var warn=[], strict=[];
+    [].forEach.call(document.querySelectorAll('p,li,dd,figcaption,h1,h2,h3,.lede,.cap'),function(el){
+      if(el.querySelector('p,li,dd')) return;                       // leaves only
+      var t=(el.textContent||'').replace(/\s+/g,' ').trim();
+      if(!t) return;
+      var isStrict=!!el.closest('[data-ste="strict"]');
+      var limit=isStrict?20:28, sink=isStrict?strict:warn;
+      t.split(/[.!?]+[\s"'”’)]+/).forEach(function(s){   // no lookbehind: older Safari
+        var n=s.split(/\s+/).filter(Boolean).length;
+        if(n>limit) sink.push(n+' words (max '+limit+') · "'+s.slice(0,54)+'…"');
+      });
+      if(isStrict){
+        if(/;/.test(t)) strict.push('semicolon, use a period · "'+t.slice(0,54)+'…"');
+        var c=t.match(/\b[A-Za-z]+['’](s|t|re|ve|ll|d|m)\b/g);
+        if(c) strict.push('contraction '+c.slice(0,3).join(', ')+', write it out');
+      }
+      var m=t.match(MARKETING);
+      if(m) sink.push('marketing word: '+m.slice(0,4).join(', '));
+    });
+    return {strict:strict,warn:warn};
+  }
+
+  /* what is too wide, named, so you know what to fix, not just that it happened */
+  function tooWide(){
+    var bad=[], d=document.documentElement;
+    if(d.scrollWidth>d.clientWidth+1)
+      bad.push('the page: '+d.scrollWidth+'px of content in a '+d.clientWidth+'px viewport');
+    [].forEach.call(document.querySelectorAll('body *'),function(el){
+      if(el.closest('svg')||el.id==='cubemap-audit') return;   // svg scales by viewBox
+      if(getComputedStyle(el).overflowX!=='visible') return;   // a deliberate scroller
+      if(el.clientWidth>0&&el.scrollWidth>el.clientWidth+1)
+        bad.push('<'+el.tagName.toLowerCase()+(el.id?'#'+el.id:'')+
+          (el.classList.length?'.'+[].join.call(el.classList,'.'):'')+'> '+
+          el.scrollWidth+'px of content in '+el.clientWidth+'px');
+    });
+    return bad.slice(0,10);
+  }
+
+  function run(opts){
+    var d=document.documentElement, p=prose();
+    var r={
+      'self-contained':externals(),
+      'svg bounds':svgBounds(),
+      'no em-dashes':emDashes(),
+      'nothing too wide':tooWide(),
+      'print stylesheet':/@media\s+print/.test(
+        [].map.call(document.querySelectorAll('style'),function(s){return s.textContent}).join(''))
+        ? [] : ['no @media print block, the PDF will not match the screen'],
+      'plain language (strict)':p.strict,
+      'plain language (prose)':p.warn
+    };
+    var hard=['self-contained','svg bounds','no em-dashes','nothing too wide',
+              'print stylesheet','plain language (strict)'];
+    r.PASS=hard.every(function(k){return !r[k].length});
+    r.viewport=d.clientWidth+'px';
+    if(opts!==false) render(r,hard);
+    console.log('CUBEMAP-AUDIT '+JSON.stringify(r));
+    return r;
+  }
+
+  function render(r,hard){
+    var old=document.getElementById('cubemap-audit'); if(old) old.remove();
+    var el=document.createElement('div'); el.id='cubemap-audit';
+    el.style.cssText='position:fixed;left:12px;bottom:12px;max-width:min(560px,92vw);max-height:70vh;'+
+      'overflow:auto;z-index:9999;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;'+
+      'background:#14130f;color:#efeade;border:2px solid '+(r.PASS?'#4d8759':'#b14d3b')+';'+
+      'border-radius:10px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.35)';
+    var h='<b style="font-size:13px">'+(r.PASS?'✓ deliverable gate: PASS':'✗ deliverable gate: FAIL')+
+      '</b> <span style="opacity:.55">viewport '+r.viewport+', check at 375px too</span><br>';
+    Object.keys(r).forEach(function(k){
+      if(k==='PASS'||k==='viewport') return;
+      var v=r[k], ok=!v.length, soft=hard.indexOf(k)<0;
+      h+='<div style="margin-top:7px"><span style="color:'+(ok?'#8cc79a':(soft?'#dba055':'#d77f6b'))+'">'+
+        (ok?'✓':(soft?'!':'✗'))+'</span> '+k+(ok?'':' ('+v.length+')');
+      v.slice(0,12).forEach(function(x){ h+='<div style="opacity:.75;margin-left:14px">'+
+        String(x).replace(/[<&]/g,function(c){return c==='<'?'&lt;':'&amp;'})+'</div>'; });
+      if(v.length>12) h+='<div style="opacity:.5;margin-left:14px">…and '+(v.length-12)+' more</div>';
+      h+='</div>';
+    });
+    h+='<div style="margin-top:9px;opacity:.5">click to dismiss</div>';
+    el.innerHTML=h; el.onclick=function(){el.remove()};
+    document.body.appendChild(el);
+  }
+
+  window.cubemapAudit=run;
+  if(location.hash==='#audit') (document.readyState==='complete')
+    ? run() : window.addEventListener('load',function(){run()});
+})();
 </script>
+<!--/cubemap-gate-audit-->
 </body>
 </html>
